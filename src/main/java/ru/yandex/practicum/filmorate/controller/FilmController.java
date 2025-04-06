@@ -14,9 +14,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-
-    private final Map<Long, Film> films = new HashMap<>();
     public static final Logger log = LoggerFactory.getLogger(FilmController.class);
+    private final Map<Long, Film> films = new HashMap<>();
 
     // Получаем список всех фильмов
     @GetMapping

@@ -15,10 +15,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-
-    private final Map<Long, User> users = new HashMap<>();
     public static final Logger log = LoggerFactory.getLogger(UserController.class);
-
+    private final Map<Long, User> users = new HashMap<>();
 
     @GetMapping
     public Collection<User> getAllUsers() {
