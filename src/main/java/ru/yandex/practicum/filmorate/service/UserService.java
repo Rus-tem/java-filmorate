@@ -63,7 +63,7 @@ public class UserService {
             if (user1.getFriendsId().isEmpty()) {
                 user1.getFriendsId().add(0L);
             }
-            if (user1.getId().equals(id)) {//&& user1.getFriendsId().contains(friendId)) {
+            if (user1.getId().equals(id)) {
                 user1.getFriendsId().remove(friendId);
                 deleteList.add(user1);
                 if (user1.getFriendsId().isEmpty()) {
