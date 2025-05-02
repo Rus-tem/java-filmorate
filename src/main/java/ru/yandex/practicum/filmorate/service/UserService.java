@@ -55,13 +55,20 @@ public class UserService {
     // Удаление из друзей
     public Collection<User> deleteFriend(Long id, Long friendId) {
         List<User> deleteList = new ArrayList<>();
+
         if (id == null || friendId == null) {
             throw new ErrorException("Пользователь не найден");
         }
         for (User user1 : userStorage.getAllUsers()) {
-            if (user1.getId().equals(id) && user1.getFriendsId().contains(friendId)) {
+            if (user1.getFriendsId().isEmpty()) {
+                user1.getFriendsId().add(0L);
+            }
+            if (user1.getId().equals(id)) {//&& user1.getFriendsId().contains(friendId)) {
                 user1.getFriendsId().remove(friendId);
                 deleteList.add(user1);
+                if (user1.getFriendsId().isEmpty()) {
+                    user1.getFriendsId().add(0L);
+                }
                 System.out.println("Удален из друзей");
                 break;
             }
@@ -70,11 +77,19 @@ public class UserService {
             throw new NotFoundException("Пользователь не найден");
         }
         for (User user2 : userStorage.getAllUsers()) {
+            if (user2.getFriendsId().isEmpty()) {
+                user2.getFriendsId().add(0L);
+            }
             if (user2.getId().equals(friendId)) {
                 user2.getFriendsId().remove(id);
+                if (user2.getFriendsId().isEmpty()) {
+                    user2.getFriendsId().add(0L);
+                }
                 deleteList.add(user2);
-                break;
             }
+        }
+        if (deleteList.size() == 1) {
+            throw new NotFoundException("Пользователь не найден");
         }
         return deleteList;
     }
