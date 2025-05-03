@@ -10,7 +10,7 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.Collection;
 
 @RestController
-@RequestMapping
+@RequestMapping("/films")
 public class FilmController {
     private final FilmStorage filmStorage;
     private final FilmService filmService;
@@ -22,37 +22,37 @@ public class FilmController {
     }
 
     // Получаем список всех фильмов
-    @GetMapping("/films")
+    @GetMapping()
     public Collection<Film> getAllFilms() {
         return filmStorage.getAllFilms();
     }
 
     // Добавление фильма
-    @PostMapping("/films")
+    @PostMapping()
     public Film create(@Valid @RequestBody Film film) {
         return filmStorage.create(film);
     }
 
     // Обновление фильма
-    @PutMapping("/films")
+    @PutMapping()
     public Film update(@Valid @RequestBody Film newFilm) {
         return filmStorage.update(newFilm);
     }
 
     //Добавление лайка
-    @PutMapping("/films/{id}/like/{userId}")
+    @PutMapping("/{id}/like/{userId}")
     public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
         return filmService.addLike(id, userId);
     }
 
     // Удаление лайка
-    @DeleteMapping("/films/{id}/like/{userId}")
+    @DeleteMapping("/{id}/like/{userId}")
     public Film deleteFriend(@PathVariable Long id, @PathVariable Long userId) {
         return filmService.deleteLike(id, userId);
     }
 
     //Получение списка фильмов отмеченных лайком
-    @GetMapping("/films/popular")
+    @GetMapping("/popular")
     public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
         return filmService.getPopularFilms(count);
     }

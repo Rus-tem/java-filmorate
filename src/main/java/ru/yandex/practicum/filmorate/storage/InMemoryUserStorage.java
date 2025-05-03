@@ -5,8 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ErrorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NullFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -37,7 +37,7 @@ public class InMemoryUserStorage implements UserStorage { // перенесен�
             throw new ValidationException("Логин пользователя содержит пробелы");
         } else if (user.getEmail() == null) {
             log.error("Не указан email: {}", user);
-            throw new ErrorException("Не указан email");
+            throw new NullFoundException("Не указан email");
         } else if (user.getBirthday().isAfter(LocalDate.now())) {
             log.error("День рождения не может быть в будущем: {}", user);
             throw new ValidationException("День рождения не может быть в будущем");
@@ -52,7 +52,7 @@ public class InMemoryUserStorage implements UserStorage { // перенесен�
         User oldUser = null;
         if (newUser.getId() == null) {
             log.error("Id пользователя не указан: {}", newUser);
-            throw new ErrorException("Id должен быть указан");
+            throw new NullFoundException("Id должен быть указан");
         }
         for (User user : users.values()) {
             if (user.getId().equals(newUser.getId())) {

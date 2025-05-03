@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ErrorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NullFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -25,9 +25,6 @@ public class UserService {
     public Collection<User> addFriend(Long id, Long friendId) {
         List<User> friendsList = new ArrayList<>();
 
-        if (id == null || friendId == null) {
-            throw new ErrorException("Пользователь не найден");
-        }
         for (User user1 : userStorage.getAllUsers()) {
             if (user1.getId().equals(id)) {
                 user1.getFriendsId().add(friendId);
@@ -56,9 +53,6 @@ public class UserService {
     public Collection<User> deleteFriend(Long id, Long friendId) {
         List<User> deleteList = new ArrayList<>();
 
-        if (id == null || friendId == null) {
-            throw new ErrorException("Пользователь не найден");
-        }
         for (User user1 : userStorage.getAllUsers()) {
             if (user1.getFriendsId().isEmpty()) {
                 user1.getFriendsId().add(0L);
@@ -69,7 +63,6 @@ public class UserService {
                 if (user1.getFriendsId().isEmpty()) {
                     user1.getFriendsId().add(0L);
                 }
-                System.out.println("Удален из друзей");
                 break;
             }
         }
@@ -98,17 +91,16 @@ public class UserService {
     public Collection<User> getUserFriends(Long idFriend) {
         List<Long> commonFriends = new ArrayList<>();
         List<User> friends = new ArrayList<>();
+        User userFriend = null;
 
-        if (idFriend == null) {
-            throw new ErrorException("Пользователь не найден");
-        }
         for (User user1 : userStorage.getAllUsers()) {
             if (user1.getId().equals(idFriend)) {
                 commonFriends = new ArrayList<>(user1.getFriendsId());
+                userFriend = user1;
                 break;
             }
         }
-        if (commonFriends.isEmpty()) {
+        if (userFriend == null) {//(commonFriends.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
         for (User user2 : userStorage.getAllUsers()) {
@@ -127,24 +119,23 @@ public class UserService {
         User user1 = null;
         User user2 = null;
 
-        if (id == null || otherId == null) {
-            throw new ErrorException("Пользователь не найден");
-        }
         for (User userId1 : userStorage.getAllUsers()) {
             if (userId1.getId().equals(id)) {
                 user1 = userId1;
+                break;
             }
         }
         if (user1 == null) {
-            throw new ErrorException("Пользователь не найден");
+            throw new NullFoundException("Пользователь не найден");
         }
         for (User userId2 : userStorage.getAllUsers()) {
             if (userId2.getId().equals(otherId)) {
                 user2 = userId2;
+                break;
             }
         }
         if (user2 == null) {
-            throw new ErrorException("Пользователь не найден");
+            throw new NullFoundException("Пользователь не найден");
         }
         if (user1.getFriendsId().isEmpty() && user2.getFriendsId().isEmpty()) {
             throw new ValidationException("Список друзей пуст");
