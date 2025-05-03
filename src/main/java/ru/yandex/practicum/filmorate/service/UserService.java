@@ -100,7 +100,7 @@ public class UserService {
                 break;
             }
         }
-        if (userFriend == null) {//(commonFriends.isEmpty()) {
+        if (userFriend == null) {
             throw new NotFoundException("Пользователь не найден");
         }
         for (User user2 : userStorage.getAllUsers()) {
