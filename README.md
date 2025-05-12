@@ -7,7 +7,7 @@ Template repository for Filmorate project.
 </picture>
 <H3>
  Диаграмма описывает 9 таблиц:
-<H2>Films</H2>
+<h2>Films</h2>
  Номер (id) фильма;
  Название (name) фильма;
  Описание (description) фильма;
@@ -17,7 +17,7 @@ Template repository for Filmorate project.
  Возрастной рейтинг (ageRating) фильма;
  Список лайков, содержит id User - ссылка на таблицу likesIdUser со списком id.
 </H3>
- <H2>User</H2>
+ <h2>User</h2>
  <H3>
  Номер (id) пользователя в таблице;
  Логин (login) пользователя;
@@ -33,6 +33,10 @@ Template repository for Filmorate project.
  Получение списка популярных фильмов(фильмы у которых есть лайки)</H3>
  Содержит id фильма и количество лайков у фильма 
  </H3>
+  <h2>getAllUsers</h2>
+<H3>   Получение списка всех пользователей. Содержит ссылки на id все пользователей</H3>
+   <h2>getCommonFriends</h2>
+ <H3>  Получение списка общих друзей 2 пользователей. Содержит id пользователя и список id его друзей </H3>
   <h2>getAllUsers</h2>
 <H3>   Получение списка всех пользователей. Содержит ссылки на id все пользователей</H3>
    <h2>getCommonFriends</h2>
