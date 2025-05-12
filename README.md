@@ -7,6 +7,7 @@ Template repository for Filmorate project.
 </picture>
 <H3> Диаграмма описывает 9 таблиц: </H3>
 <h2>Films</h2>
+ <H3>
  Номер (id) фильма;
  Название (name) фильма;
  Описание (description) фильма;
