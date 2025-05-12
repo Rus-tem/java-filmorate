@@ -5,8 +5,7 @@ Template repository for Filmorate project.
  <source media="(prefers-color-scheme: light)" srcset="https://github.com/Rus-tem/java-filmorate/blob/main/diagFilmorate.JPG">
  <img alt="YOUR-ALT-TEXT" src="https://github.com/Rus-tem/java-filmorate/blob/main/diagFilmorate.JPG">
 </picture>
-<H3>
- Диаграмма описывает 9 таблиц:
+<H3> Диаграмма описывает 9 таблиц: </H3>
 <h2>Films</h2>
  Номер (id) фильма;
  Название (name) фильма;
