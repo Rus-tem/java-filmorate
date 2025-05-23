@@ -7,12 +7,11 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.annotation.CheckDateFilm;
 
 import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Data
 public class Film {
-    private Set<Long> likesIdUser = new HashSet<>();
     private Long id;
     @NotBlank(message = "Имя не должно быть пустым")
     private String name;
@@ -22,4 +21,9 @@ public class Film {
     private LocalDate releaseDate;
     @Positive(message = "Продолжительность фильма может быть только положительное число")
     private long duration;
+    private Set<Genre> genres = new LinkedHashSet<>();
+    private MPA mpa;
+
+    public Film() {
+    }
 }

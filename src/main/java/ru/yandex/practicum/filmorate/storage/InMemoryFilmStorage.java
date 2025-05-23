@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -13,14 +14,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Qualifier
 public class InMemoryFilmStorage implements FilmStorage {
 
     public static final Logger log = LoggerFactory.getLogger(FilmController.class);
     private final Map<Long, Film> films = new HashMap<>();
 
+    public Collection<Film> getAllFilm() {
+        log.info("Получение списка всех фильмов");
+        return films.values();
+    }
+
     @Override
     public Collection<Film> getAllFilms() {
-        log.info("Получение списка всех фильмов");
         return films.values();
     }
 

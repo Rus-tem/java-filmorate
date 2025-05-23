@@ -24,37 +24,42 @@ public class FilmController {
     // Получаем список всех фильмов
     @GetMapping()
     public Collection<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        return filmService.getAllFilms();
     }
 
     // Добавление фильма
     @PostMapping()
-    public Film create(@Valid @RequestBody Film film) {
-        return filmStorage.create(film);
+    public Film createFilm(@Valid @RequestBody Film film) {
+        return filmService.createFilm(film);
     }
 
     // Обновление фильма
     @PutMapping()
-    public Film update(@Valid @RequestBody Film newFilm) {
-        return filmStorage.update(newFilm);
+    public Film updateFilm(@Valid @RequestBody Film newFilm) {
+        return filmService.updateFilm(newFilm);
     }
 
     //Добавление лайка
-    @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable Long id, @PathVariable Long userId) {
-        return filmService.addLike(id, userId);
+    @PutMapping("/{filmId}/like/{userId}")
+    public Film addLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        return filmService.addLike(filmId, userId);
     }
 
     // Удаление лайка
-    @DeleteMapping("/{id}/like/{userId}")
-    public Film deleteFriend(@PathVariable Long id, @PathVariable Long userId) {
-        return filmService.deleteLike(id, userId);
+    @DeleteMapping("/{filmId}/like/{userId}")
+    public Film deleteFriend(@PathVariable Long filmId, @PathVariable Long userId) {
+        return filmService.deleteLike(filmId, userId);
     }
 
     //Получение списка фильмов отмеченных лайком
     @GetMapping("/popular")
     public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
         return filmService.getPopularFilms(count);
+    }
+
+    @GetMapping("/{filmId}")
+    public Film getFilmWithId(@PathVariable Long filmId) {
+        return filmService.getFilmWithId(filmId);
     }
 
 }
