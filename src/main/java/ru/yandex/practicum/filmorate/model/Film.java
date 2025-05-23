@@ -22,7 +22,6 @@ public class Film {
     @Positive(message = "Продолжительность фильма может быть только положительное число")
     private long duration;
     private Set<Genre> genres = new LinkedHashSet<>();
-    ;
     private MPA mpa;
 
     public Film() {
