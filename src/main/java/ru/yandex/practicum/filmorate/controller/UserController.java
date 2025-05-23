@@ -24,20 +24,20 @@ public class UserController {
 
     //Получение списка всех пользователей +
     @GetMapping()
-    @ResponseStatus(HttpStatus.OK) //TODO
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
     // Добавление пользователя +
     @PostMapping()
-    @ResponseStatus(HttpStatus.CREATED) //TODO
+    @ResponseStatus(HttpStatus.CREATED)
     public User createUser(@RequestBody User user) {
         return userService.createUser(user);
     }
 
-    // Обновление пользователя DTO +
-    @PutMapping() //TODO
+    // Обновление пользователя
+    @PutMapping()
     public User updateUser(@RequestBody User updateUser) { //User newUser
         return userService.updateUser(updateUser);
     }

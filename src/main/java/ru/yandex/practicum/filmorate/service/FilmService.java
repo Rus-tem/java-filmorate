@@ -78,8 +78,8 @@ public class FilmService {
     }
 
     // Получение фильма по ID
-    public Film GetFilmWithID(Long film_id) {
-        Film film = filmDbStorage.getById(film_id);
+    public Film GetFilmWithId(Long filmId) {
+        Film film = filmDbStorage.getById(filmId);
         return film;
     }
 
