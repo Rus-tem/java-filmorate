@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -21,28 +22,42 @@ public class UserController {
         this.userService = userService;
     }
 
-    //Получение списка всех пользователей
+    //Получение списка всех пользователей +
     @GetMapping()
+    @ResponseStatus(HttpStatus.OK)
     public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+        return userService.getAllUsers();
     }
 
-    // Добавление пользователя
+    // Добавление пользователя +
     @PostMapping()
-    public User create(@RequestBody User user) {
-        return userStorage.create(user);
+    @ResponseStatus(HttpStatus.CREATED)
+    public User createUser(@RequestBody User user) {
+        return userService.createUser(user);
     }
 
     // Обновление пользователя
     @PutMapping()
-    public User update(@RequestBody User newUser) {
-        return userStorage.update(newUser);
+    public User updateUser(@RequestBody User updateUser) { //User newUser
+        return userService.updateUser(updateUser);
     }
 
-    // Добавление в друзья
+    // Добавление в друзья +-
     @PutMapping("/{id}/friends/{friendId}")
     public Collection<User> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         return userService.addFriend(id, friendId);
+    }
+
+    // Получение списка друзей конкретного пользователя +-
+    @GetMapping("/{id}/friends")
+    public Collection<User> getUserFriends(@PathVariable Long id) {
+        return userService.getUserFriends(id);
+    }
+
+    // Получение общих друзей разных пользователей +-
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> commonFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.commonFriends(id, otherId);
     }
 
     // Удаление из друзей
@@ -51,15 +66,4 @@ public class UserController {
         return userService.deleteFriend(id, friendId);
     }
 
-    // Получение списка друзей конкретного пользователя
-    @GetMapping("/{id}/friends")
-    public Collection<User> getUserFriends(@PathVariable Long id) {
-        return userService.getUserFriends(id);
-    }
-
-    // Получение общих друзей разных пользователей
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> commonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        return userService.commonFriends(id, otherId);
-    }
 }
