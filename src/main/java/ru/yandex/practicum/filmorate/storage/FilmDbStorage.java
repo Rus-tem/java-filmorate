@@ -127,7 +127,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     //Удаление из лайка фильма
     public void deleteLike(long filmId, long userId) {
-        jdbc.update(DELETE_LIKE, filmId, userId);
+        jdbc.update(DELETE_LIKE, userId, filmId);
     }
 
     // Получение популярных фильмов
