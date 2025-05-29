@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -54,6 +55,18 @@ public class FilmService {
     public Film updateFilm(Film updateFilm) {
         filmDbStorage.update(updateFilm);
         return updateFilm;
+    }
+
+    public Film deleteFilm(Long deleteFilm) {
+        if (deleteFilm == null || deleteFilm <= 0) {
+            throw new ValidationException("Некорректный ID");
+        }
+        if (filmDbStorage.getById(deleteFilm) == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
+        Film film = filmDbStorage.getById(deleteFilm);
+        filmDbStorage.deleteFilm(deleteFilm);
+        return film;
     }
 
     // Добавление лайка фильму
