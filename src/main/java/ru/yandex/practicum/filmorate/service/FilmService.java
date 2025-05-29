@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -69,12 +70,20 @@ public class FilmService {
     }
 
     // Получение списка отмеченных лайком (список популярных фильмов)
-    public Collection<Film> getPopularFilms(Long count) {
-        if (count == 0) {
-            return filmDbStorage.getPopularFilms().stream().limit(10).toList();
-        } else {
-            return filmDbStorage.getPopularFilms().stream().limit(count).toList();
+    public Collection<Film> getPopularFilms(Long count, Long genreId, Long year) {
+        if (count != null && count < 0) {
+            throw new ValidationException("Количество фильмов не может быть отрицательным");
         }
+        if (genreId != null && (genreId <= 0 || genreId > 6)) {
+            throw new ValidationException("Жанр должен быть от 1 до 6");
+        }
+        if (year != null && year < 1895) {
+            throw new ValidationException("Год выпуска фильма не может быть раньше 1895");
+        }
+
+        Long actualCount = count == null || count == 0 ? 10L : count;
+
+        return filmDbStorage.getPopularFilms(actualCount, genreId, year);
     }
 
     // Получение фильма по ID

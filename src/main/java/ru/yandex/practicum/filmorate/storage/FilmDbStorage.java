@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,15 +32,19 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             JOIN MPA ON FILMS.mpa_id = MPA.mpa_id
             LEFT JOIN FILM_GENRES ON FILMS.film_id = FILM_GENRES.film_id
             LEFT JOIN GENRE ON FILM_GENRES.genre_id = GENRE.genre_id;""";
-    private static final String GET_POPULAR_FILMS = """
-            SELECT F.*, m.*, COUNT(fl.user_id) AS likes_count, g.*, fg.*
-            FROM Films f
-            LEFT JOIN likes fl ON f.film_id = fl.film_id
-            LEFT JOIN MPA m ON f.mpa_ID = m.mpa_id
-            LEFT JOIN FILM_GENRES fg ON f.film_id = fg.film_id
-            LEFT JOIN Genre g ON fg.genre_id = g.genre_id
-            GROUP BY f.film_id, f.name, G.GENRE_ID
-            ORDER BY likes_count DESC;""";
+    private static final String FIND_POPULAR_FILMS_SQL =
+            "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name AS mpa_name, g.genre_id, g.genre_name AS genre_name, " +
+            "COUNT(l.user_id) AS likes_count " +
+            "FROM films f " +
+            "LEFT JOIN likes l ON f.film_id = l.film_id " +
+            "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
+            "LEFT JOIN genre g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+            "WHERE (? IS NULL OR g.genre_id = ?) " +
+            "AND (? IS NULL OR EXTRACT(YEAR FROM f.release_date) = ?) " +
+            "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name " +
+            "ORDER BY likes_count DESC " +
+            "LIMIT ?";
     private static final String GET_BY_ID_QUERY = """
             SELECT f.*, m.mpa_id, m.mpa_name, g.genre_id, g.genre_name
             FROM Films f
@@ -111,12 +116,17 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     //Удаление из лайка фильма
     public void deleteLike(long filmId, long userId) {
-        jdbc.update(DELETE_LIKE, filmId, userId);
+        jdbc.update(DELETE_LIKE, userId, filmId);
     }
 
     // Получение популярных фильмов
-    public List<Film> getPopularFilms() {
-        return findMany(GET_POPULAR_FILMS);
+    public Collection<Film> getPopularFilms(Long count, Long genreId, Long year) {
+
+        return findMany(FIND_POPULAR_FILMS_SQL,
+                genreId, genreId,
+                year, year,
+                count
+        );
     }
 
 }

@@ -53,8 +53,10 @@ public class FilmController {
 
     //Получение списка фильмов отмеченных лайком
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
-        return filmService.getPopularFilms(count);
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "0") Long count,
+                                            @RequestParam(required = false) Long genreId,
+                                            @RequestParam(required = false) Long year) {
+        return filmService.getPopularFilms(count, genreId, year);
     }
 
     @GetMapping("/{filmId}")
