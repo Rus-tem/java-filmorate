@@ -115,5 +115,17 @@ public class UserService {
         return listFriends;
     }
 
+    public User deleteUser(Long userId) {
+        if (userId == null || userId <= 0) {
+            throw new ValidationException("Некорректное id пользователя");
+        }
+        if (userDbStorage.findById(userId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        User user = userDbStorage.findById(userId).get();
+        userDbStorage.deleteUser(userId);
+        return user;
+    }
+
 }
 

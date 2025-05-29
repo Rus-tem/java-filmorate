@@ -47,8 +47,13 @@ public class FilmController {
 
     // Удаление лайка
     @DeleteMapping("/{filmId}/like/{userId}")
-    public Film deleteFriend(@PathVariable Long filmId, @PathVariable Long userId) {
+    public Film deleteLike(@PathVariable Long filmId, @PathVariable Long userId) {
         return filmService.deleteLike(filmId, userId);
+    }
+
+    @DeleteMapping("/{filmId}")
+    public Film deleteFilm(@PathVariable Long filmId) {
+        return filmService.deleteFilm(filmId);
     }
 
     //Получение списка фильмов отмеченных лайком
