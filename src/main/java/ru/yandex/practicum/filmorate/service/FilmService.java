@@ -58,8 +58,8 @@ public class FilmService {
     }
 
     // Добавление лайка фильму
-    public Film addLike(Long filmId, Long userId) {
-        filmDbStorage.addLike(filmId, userId);
+    public Film addLike(Long userId, Long filmId) {
+        filmDbStorage.addLike(userId, filmId);
         return filmDbStorage.findById(filmId).get();
     }
 
