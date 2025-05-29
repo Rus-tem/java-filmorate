@@ -98,6 +98,6 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
     }
 
     public void deleteUser(long userId) {
-        jdbc.update(DELETE_USER, userId, userId, userId);
+        jdbc.update(DELETE_USER, userId, userId, userId, userId);
     }
 }

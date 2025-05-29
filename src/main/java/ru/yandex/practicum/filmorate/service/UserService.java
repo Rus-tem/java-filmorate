@@ -87,6 +87,18 @@ public class UserService {
 
     }
 
+    public User getUserById(Long id) {
+        if (id == null || id <= 0) {
+            throw new ValidationException("Некорректное id пользователя");
+        }
+        if (userDbStorage.findById(id).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        User user = userDbStorage.findById(id).get();
+        return user;
+
+    }
+
     // Получение списка общих друзей
     public Collection<User> commonFriends(Long id, Long otherId) {
         Optional<User> optionalUser1 = userDbStorage.findById(id);
