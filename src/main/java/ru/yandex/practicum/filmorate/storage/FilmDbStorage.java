@@ -24,7 +24,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String CREATE_GENRE = "MERGE INTO FILM_GENRES(film_id, genre_id)" + "VALUES (?, ?)";
     private static final String CREATE_NEW_FILMS = "INSERT INTO films(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?) ;";
     private static final String UPDATE_FILMS = " UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?;";
-    private static final String ADD_LIKE = "MERGE INTO LIKES(film_id, user_id) VALUES (?, ?);";
+    private static final String ADD_LIKE = """
+            INSERT INTO likes (film_id, user_id)
+            SELECT ?, ?
+            WHERE NOT EXISTS (SELECT 1 FROM likes WHERE film_id = ? AND user_id = ?)""";
     private static final String DELETE_LIKE = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
     private static final String FIND_ALL_FILMS = """
             SELECT FILMS.*, MPA.*,  GENRE.*, FILM_GENRES.*
@@ -111,7 +114,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     // Добавление в лайка фильму
     public void addLike(long userId, long filmId) {
-        jdbc.update(ADD_LIKE, filmId, userId);
+        jdbc.update(ADD_LIKE, filmId, userId, filmId, userId);
     }
 
     //Удаление из лайка фильма
