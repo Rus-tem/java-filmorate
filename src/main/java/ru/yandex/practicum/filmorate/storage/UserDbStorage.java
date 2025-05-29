@@ -31,6 +31,7 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
     private static final String DELETE_USER = """
             DELETE FROM likes WHERE user_id = ?;
             DELETE FROM friends WHERE user_id = ?;
+            DELETE FROM friends WHERE friends_id = ?;
             DELETE FROM users WHERE user_id = ?""";
 
     // Получение всех пользователей из таблицы users

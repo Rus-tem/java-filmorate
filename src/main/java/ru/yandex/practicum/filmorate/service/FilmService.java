@@ -93,6 +93,9 @@ public class FilmService {
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
         Film film = filmDbStorage.getById(filmId);
+        if (film == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
         return film;
     }
 
