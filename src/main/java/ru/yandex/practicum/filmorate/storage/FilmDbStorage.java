@@ -26,7 +26,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String ADD_LIKE = "MERGE INTO LIKES(film_id, user_id) VALUES (?, ?);";
     private static final String DELETE_LIKE = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
     private static final String DELETE_FILM = """
-            DELETE FROM FILM_GENRES WHERE film_id = ?
+            DELETE FROM FILM_GENRES WHERE film_id = ?;
             DELETE FROM LIKES WHERE film_id = ?;
             DELETE FROM films WHERE film_id = ?""";
     private static final String FIND_ALL_FILMS = """
