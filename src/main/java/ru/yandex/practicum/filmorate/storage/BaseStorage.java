@@ -31,6 +31,10 @@ public class BaseStorage<T> {
         return jdbc.query(query, mapper, params);
     }
 
+    protected List<T> getCommonFilms(String query, Object... params) {
+        return jdbc.query(query, mapper, params);
+    }
+
 
     protected long insert(String query, Object... params) {
         GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();

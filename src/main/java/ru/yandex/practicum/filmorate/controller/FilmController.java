@@ -47,7 +47,7 @@ public class FilmController {
 
     // Удаление лайка
     @DeleteMapping("/{filmId}/like/{userId}")
-    public Film deleteFriend(@PathVariable Long filmId, @PathVariable Long userId) {
+    public Film deleteLike(@PathVariable Long filmId, @PathVariable Long userId) {
         return filmService.deleteLike(filmId, userId);
     }
 
@@ -64,4 +64,8 @@ public class FilmController {
         return filmService.getFilmWithId(filmId);
     }
 
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam("userId") Long userId, @RequestParam("friendId") Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }

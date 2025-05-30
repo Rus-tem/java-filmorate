@@ -56,6 +56,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             LEFT JOIN Genre g ON fg.genre_id = g.genre_id
             WHERE f.film_id = ?
             ORDER BY fg.film_id ASC""";
+
     private static final String UPDATE_GENRE = "Update FILM_GENRES SET genre_id = ? WHERE  film_id = ?;";
     private static final String GET_COMMON_FILMS = """
             SELECT f.film_id, f.name AS film_name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name, COUNT(l.user_id) AS likes_count
@@ -149,6 +150,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 year, year,
                 count
         );
+    }
+
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return getCommonFilms(GET_COMMON_FILMS, userId, friendId);
     }
 
 }
