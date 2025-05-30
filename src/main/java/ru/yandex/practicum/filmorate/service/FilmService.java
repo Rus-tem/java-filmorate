@@ -1,13 +1,17 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.mappers.DirectorDbStorage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,13 +25,15 @@ public class FilmService {
     private final FilmDbStorage filmDbStorage;
     private final MpaDbStorage mpaDbStorage;
     private final GenreDbStorage genreDbStorage;
+    private final DirectorDbStorage directorDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage) {
 
         this.filmDbStorage = filmDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.genreDbStorage = genreDbStorage;
+        this.directorDbStorage = directorDbStorage;
     }
 
     // Получение всех из таблицы films
@@ -79,7 +85,11 @@ public class FilmService {
 
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
+
         Film film = filmDbStorage.getById(filmId);
+       if (film == null) {
+           throw new NotFoundException("Фильм не найден");
+       }
         return film;
     }
 
@@ -110,4 +120,37 @@ public class FilmService {
         }
         return optionalMpa.get();
     }
+
+    // Получение списка всех режиссеров(directors)
+    public Collection<Director> getAllDirectors(){
+       return directorDbStorage.getAllDirectors();
+    }
+
+    // Получение режиссера(director) по ID
+    public Director getDirector(long id) {
+     Optional<Director> optionalDirector = directorDbStorage.getDirector(id);
+     if (optionalDirector.isEmpty()) {
+         throw new NotFoundException("Режиссер не найден");
+     }
+        return optionalDirector.get();
+    }
+
+    //Создание режиссера(director)
+    public Director createDirector (Director director) {
+        if (director.getName() == null || StringUtils.containsAny(director.getName(), " ")) {
+            throw new ValidationException("Не корректное имя режиссера");
+        }
+      return directorDbStorage.createDirector(director);
+    }
+
+    // Обновление режиссера (director)
+    public Director uptadeDirector (Director director) {
+        return directorDbStorage.uptadeDirector(director);
+    }
+
+    //Удаление режиссера(director) по ID
+    public void deleteDirector(Long id) {
+        directorDbStorage.deleteDirector(id);
+    }
+
 }

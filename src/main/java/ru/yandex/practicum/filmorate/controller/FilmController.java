@@ -56,10 +56,16 @@ public class FilmController {
     public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
         return filmService.getPopularFilms(count);
     }
-
+    // Получение фильма по ID
     @GetMapping("/{filmId}")
     public Film getFilmWithId(@PathVariable Long filmId) {
         return filmService.getFilmWithId(filmId);
     }
+
+    // Получение фильма с сортировкой по количеству лайков и году
+//    @GetMapping("/director/{directorId}")
+//    public Film getFilmWithLikesAndYears(@PathVariable Long directorId, @RequestParam ) {
+//        return filmService.getFilmWithId(directorId);
+//    }
 
 }

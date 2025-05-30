@@ -23,6 +23,7 @@ public class Film {
     private long duration;
     private Set<Genre> genres = new LinkedHashSet<>();
     private MPA mpa;
+    private Set<Director> directors = new LinkedHashSet<>();
 
     public Film() {
     }
