@@ -56,6 +56,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             LEFT JOIN Genre g ON fg.genre_id = g.genre_id
             WHERE f.film_id = ?
             ORDER BY fg.film_id ASC""";
+    private static final String UPDATE_GENRE = "Update FILM_GENRES SET genre_id = ? WHERE  film_id = ?;";
 
 
     // Получение списка всех фильмов
@@ -93,7 +94,9 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 newFilm.getMpa().getId(),
                 newFilm.getId()
         );
-        updateGenre(newFilm.getId());
+        for (Genre genre : newFilm.getGenres()) {
+            jdbc.update(UPDATE_GENRE, genre.getId(), newFilm.getId());
+        }
         return newFilm;
     }
 
