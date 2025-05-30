@@ -57,6 +57,22 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             WHERE f.film_id = ?
             ORDER BY fg.film_id ASC""";
     private static final String UPDATE_GENRE = "Update FILM_GENRES SET genre_id = ? WHERE  film_id = ?;";
+    private static final String GET_COMMON_FILMS = """
+            SELECT f.film_id, f.name AS film_name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name, COUNT(l.user_id) AS likes_count
+            FROM films f
+            JOIN mpa m ON f.mpa_id = m.mpa_id
+            JOIN film_genres fg ON f.film_id = fg.film_id
+            JOIN genre g ON fg.genre_id = g.genre_id
+            JOIN likes l ON f.film_id = l.film_id
+            WHERE l.film_id IN (SELECT DISTINCT l1.film_id FROM likes l1 WHERE l1.user_id = ?)
+                AND l.film_id IN (
+                    SELECT DISTINCT l2.film_id
+                    FROM likes l2
+                    WHERE l2.user_id = ?
+                )
+            GROUP BY f.film_id, f.name
+            ORDER BY likes_count DESC;
+            """;
 
 
     // Получение списка всех фильмов
