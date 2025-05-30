@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
@@ -26,14 +27,17 @@ public class FilmService {
     private final MpaDbStorage mpaDbStorage;
     private final GenreDbStorage genreDbStorage;
     private final DirectorDbStorage directorDbStorage;
+    private final UserDbStorage userDbStorage;
+
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage) {
 
         this.filmDbStorage = filmDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.genreDbStorage = genreDbStorage;
         this.directorDbStorage = directorDbStorage;
+        this.userDbStorage = userDbStorage;
     }
 
     // Получение всех из таблицы films
@@ -62,6 +66,18 @@ public class FilmService {
         return updateFilm;
     }
 
+    public Film deleteFilm(Long deleteFilm) {
+        if (deleteFilm == null || deleteFilm <= 0) {
+            throw new ValidationException("Некорректный ID");
+        }
+        if (filmDbStorage.getById(deleteFilm) == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
+        Film film = filmDbStorage.getById(deleteFilm);
+        filmDbStorage.deleteFilm(deleteFilm);
+        return film;
+    }
+
     // Добавление лайка фильму
     public Film addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
@@ -87,9 +103,9 @@ public class FilmService {
     public Film getFilmWithId(Long filmId) {
 
         Film film = filmDbStorage.getById(filmId);
-       if (film == null) {
-           throw new NotFoundException("Фильм не найден");
-       }
+        if (film == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
         return film;
     }
 
@@ -119,6 +135,16 @@ public class FilmService {
             throw new NotFoundException("MPA не найден");
         }
         return optionalMpa.get();
+    }
+
+    public Collection<Film> getCommonFilms(Long userId, Long friendId) {
+        if (userId == null || friendId == null || userId == friendId || userId < 0 || friendId < 0 || userId == 0 || friendId == 0) {
+            throw new ValidationException("Не корректные данные о пользователях");
+        }
+        if (userDbStorage.findById(userId).isEmpty() || userDbStorage.findById(friendId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        return filmDbStorage.getCommonFilms(userId, friendId);
     }
 
     // Получение списка всех режиссеров(directors)
