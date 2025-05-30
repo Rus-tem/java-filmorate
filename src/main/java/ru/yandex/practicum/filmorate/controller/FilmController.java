@@ -51,6 +51,11 @@ public class FilmController {
         return filmService.deleteLike(filmId, userId);
     }
 
+    @DeleteMapping("/{filmId}")
+    public Film deleteFilm(@PathVariable Long filmId) {
+        return filmService.deleteFilm(filmId);
+    }
+
     //Получение списка фильмов отмеченных лайком
     @GetMapping("/popular")
     public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
