@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String CREATE_GENRE = "MERGE INTO FILM_GENRES(film_id, genre_id)" + "VALUES (?, ?)";
     private static final String CREATE_NEW_FILMS = "INSERT INTO films(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?) ;";
     private static final String UPDATE_FILMS = " UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?;";
-    private static final String ADD_LIKE = "MERGE INTO LIKES(film_id, user_id) VALUES (?, ?);";
+    private static final String ADD_LIKE = """
+            INSERT INTO likes (user_id, film_id)
+            SELECT ?, ?
+            WHERE NOT EXISTS (SELECT 1 FROM likes WHERE user_id = ? AND film_id = ?)""";
     private static final String DELETE_LIKE = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
     private static final String DELETE_FILM = """
             DELETE FROM FILM_GENRES WHERE film_id = ?;
@@ -35,15 +39,19 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             JOIN MPA ON FILMS.mpa_id = MPA.mpa_id
             LEFT JOIN FILM_GENRES ON FILMS.film_id = FILM_GENRES.film_id
             LEFT JOIN GENRE ON FILM_GENRES.genre_id = GENRE.genre_id;""";
-    private static final String GET_POPULAR_FILMS = """
-            SELECT F.*, m.*, COUNT(fl.user_id) AS likes_count, g.*, fg.*
-            FROM Films f
-            LEFT JOIN likes fl ON f.film_id = fl.film_id
-            LEFT JOIN MPA m ON f.mpa_ID = m.mpa_id
-            LEFT JOIN FILM_GENRES fg ON f.film_id = fg.film_id
-            LEFT JOIN Genre g ON fg.genre_id = g.genre_id
-            GROUP BY f.film_id, f.name, G.GENRE_ID
-            ORDER BY likes_count DESC;""";
+    private static final String FIND_POPULAR_FILMS_SQL =
+            "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name AS mpa_name, g.genre_id, g.genre_name AS genre_name, " +
+            "COUNT(l.user_id) AS likes_count " +
+            "FROM films f " +
+            "LEFT JOIN likes l ON f.film_id = l.film_id " +
+            "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
+            "LEFT JOIN genre g ON fg.genre_id = g.genre_id " +
+            "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+            "WHERE (? IS NULL OR g.genre_id = ?) " +
+            "AND (? IS NULL OR EXTRACT(YEAR FROM f.release_date) = ?) " +
+            "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name " +
+            "ORDER BY likes_count DESC " +
+            "LIMIT ?";
     private static final String GET_BY_ID_QUERY = """
             SELECT f.*, m.mpa_id, m.mpa_name, g.genre_id, g.genre_name
             FROM Films f
@@ -52,6 +60,8 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             LEFT JOIN Genre g ON fg.genre_id = g.genre_id
             WHERE f.film_id = ?
             ORDER BY fg.film_id ASC""";
+
+    private static final String UPDATE_GENRE = "Update FILM_GENRES SET genre_id = ? WHERE  film_id = ?;";
     private static final String GET_COMMON_FILMS = """
             SELECT f.film_id, f.name AS film_name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name, COUNT(l.user_id) AS likes_count
             FROM films f
@@ -105,7 +115,9 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 newFilm.getMpa().getId(),
                 newFilm.getId()
         );
-        updateGenre(newFilm.getId());
+        for (Genre genre : newFilm.getGenres()) {
+            jdbc.update(UPDATE_GENRE, genre.getId(), newFilm.getId());
+        }
         return newFilm;
     }
 
@@ -126,7 +138,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     // Добавление в лайка фильму
     public void addLike(long userId, long filmId) {
-        jdbc.update(ADD_LIKE, userId, filmId);
+        jdbc.update(ADD_LIKE, userId, filmId, userId, filmId);
     }
 
     //Удаление из лайка фильма
@@ -141,8 +153,13 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     }
 
     // Получение популярных фильмов
-    public List<Film> getPopularFilms() {
-        return findMany(GET_POPULAR_FILMS);
+    public Collection<Film> getPopularFilms(Long count, Long genreId, Long year) {
+
+        return findMany(FIND_POPULAR_FILMS_SQL,
+                genreId, genreId,
+                year, year,
+                count
+        );
     }
 
     public List<Film> getCommonFilms(Long userId, Long friendId) {
