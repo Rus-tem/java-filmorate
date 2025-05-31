@@ -34,25 +34,21 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
             WHERE r.film_id =?
             GROUP BY r.review_id
             ORDER BY useful DESC
-            LIMIT ?;
-             """;
+            LIMIT ?;""";
 
     private static final String CREATE_NEW_REVIEW = """
-            INSERT INTO reviews(content, is_positive, user_id, film_id) VALUES(?,?,?,?);
-            """;
+            INSERT INTO reviews(content, is_positive, user_id, film_id) VALUES(?,?,?,?);""";
 
     private static final String FIND_REVIEW_BY_ID = """
             SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful 
             FROM REVIEWS AS r 
             LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id 
             WHERE r.review_id =?
-            GROUP BY r.review_id;           
-             """;
+            GROUP BY r.review_id;""";
     private static final String UPDATE_REVIEW = """
             UPDATE REVIEWS 
             SET content = ?, is_positive = ?
-            WHERE review_id = ?;
-            """;
+            WHERE review_id = ?;""";
 
     private static final String ADD_LIKE_DISLIKE_REVIEW =
             "INSERT INTO REVIEW_LIKES (review_id, user_id, likes)  VALUES(?,?,?);";
