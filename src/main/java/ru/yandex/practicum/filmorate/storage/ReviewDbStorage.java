@@ -20,17 +20,17 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
     }
 
     private static final String FIND_ALL_REVIEW = """
-            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful 
-            FROM REVIEWS AS r 
-            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id 
+            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful
+            FROM REVIEWS AS r
+            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id
             GROUP BY r.review_id
             ORDER BY useful DESC
             LIMIT ?;""";
 
     private static final String FIND_ALL_REVIEW_BY_ID_FILM = """
-            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful 
-            FROM REVIEWS AS r 
-            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id 
+            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful
+            FROM REVIEWS AS r
+            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id
             WHERE r.film_id =?
             GROUP BY r.review_id
             ORDER BY useful DESC
@@ -40,13 +40,13 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
             INSERT INTO reviews(content, is_positive, user_id, film_id) VALUES(?,?,?,?);""";
 
     private static final String FIND_REVIEW_BY_ID = """
-            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful 
-            FROM REVIEWS AS r 
-            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id 
+            SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful
+            FROM REVIEWS AS r
+            LEFT JOIN REVIEW_LIKES AS rl ON r.review_id = rl.review_id
             WHERE r.review_id =?
             GROUP BY r.review_id;""";
     private static final String UPDATE_REVIEW = """
-            UPDATE REVIEWS 
+            UPDATE REVIEWS
             SET content = ?, is_positive = ?
             WHERE review_id = ?;""";
 
