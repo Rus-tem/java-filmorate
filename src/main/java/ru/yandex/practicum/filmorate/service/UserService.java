@@ -35,6 +35,9 @@ public class UserService {
             throw new ConditionsNotMetException("Имейл должен быть указан");
         }
         Optional<User> alreadyExistUser = userDbStorage.findByEmail(user.getEmail());
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
         if (alreadyExistUser.isPresent()) {
             throw new DuplicatedDataException("Данный имейл уже используется");
         }

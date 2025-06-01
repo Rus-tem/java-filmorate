@@ -3,10 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.service.FilmService;
-
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -37,6 +33,7 @@ public class DirectorController {
     public Director createDirector(@Valid @RequestBody Director director) {
         return filmService.createDirector(director);
     }
+
     // Обновление режиссера(director)
     @PutMapping
     public Director uptadeDirector(@Valid @RequestBody Director director) {
@@ -45,8 +42,8 @@ public class DirectorController {
 
     //Удаление режиссера(director) по ID
     @DeleteMapping("/{id}")
-    public void deleteDirector (@PathVariable Long id) {
-         filmService.deleteDirector(id);
+    public void deleteDirector(@PathVariable Long id) {
+        filmService.deleteDirector(id);
     }
 
 }
