@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NullFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -175,7 +176,7 @@ public class FilmService {
     //Создание режиссера(director)
     public Director createDirector(Director director) {
         if (director.getName() == null || director.getName().isBlank()) {
-            throw new ValidationException("Не корректное имя режиссера");
+            throw new NullFoundException("Не корректное имя режиссера");
         }
         return directorDbStorage.createDirector(director);
     }
