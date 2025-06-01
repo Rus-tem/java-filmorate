@@ -96,7 +96,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             LEFT JOIN DIRECTOR D ON fd.director_id = d.director_id
             WHERE d.director_id = ?
             GROUP BY f.film_id, f.name, G.GENRE_ID
-            ORDER BY likes_count ASC;""";
+            ORDER BY likes_count DESC;""";
     private static final String GET_FILMS_SORT_BY_RELEASE_DATE = """
             SELECT F.*, m.*, COUNT(fl.user_id) AS likes_count, g.*, fg.*, fd.*, d.*
             FROM Films f
