@@ -61,7 +61,7 @@ user_id integer REFERENCES users(user_id),
 likes integer
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS reviews ON REVIEW_LIKES(review_id, user_id, likes);
+CREATE UNIQUE INDEX IF NOT EXISTS reviews ON REVIEW_LIKES(review_id, user_id);
 
 
 

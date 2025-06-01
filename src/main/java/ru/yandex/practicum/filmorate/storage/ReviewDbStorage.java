@@ -51,7 +51,8 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
             WHERE review_id = ?;""";
 
     private static final String ADD_LIKE_DISLIKE_REVIEW =
-            "INSERT INTO REVIEW_LIKES (review_id, user_id, likes)  VALUES(?,?,?);";
+            "MERGE INTO REVIEW_LIKES (review_id, user_id, likes) KEY (review_id, user_id) VALUES(?,?,?);";
+
 
     private static final String DELETE_LIKE_DISLIKE_REVIEW =
             "DELETE REVIEW_LIKES WHERE review_id=? AND user_id=? AND likes=?;";
