@@ -141,6 +141,5 @@ public class UserService {
         userDbStorage.deleteUser(userId);
         return user;
     }
-
 }
 
