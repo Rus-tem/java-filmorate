@@ -4,16 +4,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.exception.NullFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.*;
+import ru.yandex.practicum.filmorate.storage.mappers.DirectorDbStorage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -22,15 +22,17 @@ public class FilmService {
     private final FilmDbStorage filmDbStorage;
     private final MpaDbStorage mpaDbStorage;
     private final GenreDbStorage genreDbStorage;
+    private final DirectorDbStorage directorDbStorage;
     private final UserDbStorage userDbStorage;
 
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage) {
 
         this.filmDbStorage = filmDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.genreDbStorage = genreDbStorage;
+        this.directorDbStorage = directorDbStorage;
         this.userDbStorage = userDbStorage;
     }
 
@@ -80,6 +82,12 @@ public class FilmService {
 
     // Удаление из лайка фильма
     public Film deleteLike(Long filmId, Long userId) {
+        if (filmId == null || filmId < 0) {
+            throw new NotFoundException("Такой фильм не существует");
+        }
+        if (userId == null || userId < 0) {
+            throw new NotFoundException("Такой пользователь не существует");
+        }
         filmDbStorage.deleteLike(filmId, userId);
         return filmDbStorage.findById(filmId).get();
     }
@@ -91,6 +99,17 @@ public class FilmService {
         } else {
             return filmDbStorage.getPopularFilms().stream().limit(count).toList();
         }
+    }
+
+    //Получение всех фильмов новый тест
+    public Collection<Film> getAllFilmsTest() {
+        Set<Film> listAllFilms = new HashSet<>();
+        List<Film> filmsId = filmDbStorage.getAllFilms();
+        for (Film filmId : filmsId) {
+            Film film = filmDbStorage.getById(filmId.getId());
+            listAllFilms.add(film);
+        }
+        return listAllFilms.stream().toList().reversed();
     }
 
     // Получение фильма по ID
@@ -139,4 +158,52 @@ public class FilmService {
         }
         return filmDbStorage.getCommonFilms(userId, friendId);
     }
+
+    // Получение списка всех режиссеров(directors)
+    public Collection<Director> getAllDirectors() {
+        return directorDbStorage.getAllDirectors();
+    }
+
+    // Получение режиссера(director) по ID
+    public Director getDirector(long id) {
+        Optional<Director> optionalDirector = directorDbStorage.getDirector(id);
+        if (optionalDirector.isEmpty()) {
+            throw new NotFoundException("Режиссер не найден");
+        }
+        return optionalDirector.get();
+    }
+
+    //Создание режиссера(director)
+    public Director createDirector(Director director) {
+        if (director.getName() == null || director.getName().isBlank()) {
+            throw new NullFoundException("Не корректное имя режиссера");
+        }
+        return directorDbStorage.createDirector(director);
+    }
+
+    // Обновление режиссера (director)
+    public Director uptadeDirector(Director director) {
+        return directorDbStorage.uptadeDirector(director);
+    }
+
+    //Удаление режиссера(director) по ID
+    public void deleteDirector(Long id) {
+        directorDbStorage.deleteDirector(id);
+    }
+
+    // Получение фильма отсортированного по дате или лайкам
+    public Collection<Film> getFilmSortByLikesOrYears(Long directorId, String sortBy) {
+        if (getDirector(directorId) == null) {
+            throw new NotFoundException("Режиссер не найден");
+        }
+        if (sortBy.equals("likes")) {
+            return filmDbStorage.getFilmsSortByLikes(directorId);
+        } else if (sortBy.equals("year")) {
+            return filmDbStorage.getFilmsSortByDate(directorId);
+        } else {
+            throw new ValidationException("Указан неправильный тип сортировки");
+        }
+    }
+
+
 }
