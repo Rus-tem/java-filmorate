@@ -10,10 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
 import ru.yandex.practicum.filmorate.storage.*;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -38,6 +35,17 @@ public class FilmService {
     public List<Film> getAllFilms() {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
+
+    public Collection<Film> getAllFilmsTest() {
+        Set<Film> listAllFilms = new HashSet<>();
+        List<Film> filmsId = filmDbStorage.getAllFilms();
+        for (Film filmId : filmsId) {
+            Film film = filmDbStorage.getById(filmId.getId());
+            listAllFilms.add(film);
+        }
+        return listAllFilms.stream().toList().reversed();
+    }
+
 
     // Создание фильма в таблице films
     public Film createFilm(Film film) {

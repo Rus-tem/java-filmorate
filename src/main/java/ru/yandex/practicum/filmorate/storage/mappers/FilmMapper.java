@@ -40,9 +40,12 @@ public class FilmMapper implements RowMapper<Film> {
             genre.setId(rs.getLong("genre_id"));
             genre.setName(rs.getString("genre_name"));
             genres.add(genre);
+
             film.setGenres(genres);
         }
+
         return film;
+
     }
 }
 
