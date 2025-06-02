@@ -60,6 +60,18 @@ public class FilmService {
         return updateFilm;
     }
 
+    public Film deleteFilm(Long deleteFilm) {
+        if (deleteFilm == null || deleteFilm <= 0) {
+            throw new ValidationException("Некорректный ID");
+        }
+        if (filmDbStorage.getById(deleteFilm) == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
+        Film film = filmDbStorage.getById(deleteFilm);
+        filmDbStorage.deleteFilm(deleteFilm);
+        return film;
+    }
+
     // Добавление лайка фильму
     public Film addLike(Long userId, Long filmId) {
         filmDbStorage.addLike(userId, filmId);
@@ -92,6 +104,9 @@ public class FilmService {
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
         Film film = filmDbStorage.getById(filmId);
+        if (film == null) {
+            throw new NotFoundException("Фильм не найден");
+        }
         return film;
     }
 
