@@ -120,16 +120,7 @@ public class FilmService {
         return filmDbStorage.getPopularFilms(actualCount, genreId, year);
     }
 
-    //Получение всех фильмов новый тест
-    public Collection<Film> getAllFilmsTest() {
-        Set<Film> listAllFilms = new HashSet<>();
-        List<Film> filmsId = filmDbStorage.getAllFilms();
-        for (Film filmId : filmsId) {
-            Film film = filmDbStorage.getById(filmId.getId());
-            listAllFilms.add(film);
-        }
-        return listAllFilms.stream().toList().reversed();
-    }
+
 
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
