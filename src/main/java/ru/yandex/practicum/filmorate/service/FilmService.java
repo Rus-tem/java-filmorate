@@ -83,13 +83,13 @@ public class FilmService {
     // Добавление лайка фильму
     public Film addLike(Long userId, Long filmId) {
         filmDbStorage.addLike(userId, filmId);
-        return filmDbStorage.findById(filmId).get();
+        return filmDbStorage.getById(filmId);
     }
 
     // Удаление из лайка фильма
     public Film deleteLike(Long filmId, Long userId) {
         filmDbStorage.deleteLike(filmId, userId);
-        return filmDbStorage.findById(filmId).get();
+        return filmDbStorage.getById(filmId);
     }
 
     // Получение списка отмеченных лайком (список популярных фильмов)
