@@ -31,8 +31,6 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String UPDATE_FILMS = """
             UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ?
             WHERE film_id = ?;""";
-    private static final String ADD_LIKE = "MERGE INTO LIKES(film_id, user_id) VALUES (?, ?);";
-    private static final String UPDATE_FILMS = " UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ? WHERE film_id = ?;";
     private static final String ADD_LIKE = """
             INSERT INTO likes (user_id, film_id)
             SELECT ?, ?
