@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractorDirectors;
 
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -109,6 +110,20 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             WHERE d.director_id = ?
             GROUP BY f.film_id, f.name, G.GENRE_ID
             ORDER BY F.RELEASE_DATE ASC;""";
+
+    private static final String GET_FILM_RECOMMENDATIONS = """
+            SELECT l.FILM_ID
+            FROM LIKES AS l
+            WHERE l.USER_ID IN
+             (SELECT ls.user_id
+             FROM LIKES AS ll
+             JOIN  LIKES AS ls ON (ll.FILM_ID = ls.FILM_ID )
+             WHERE ll.USER_ID != ls.USER_ID AND ll.user_id =%d
+             GROUP BY ls.user_id
+             ORDER BY  count(ls.FILM_ID) DESC
+             LIMIT 10)
+            AND l.FILM_ID NOT IN
+             (SELECT FILM_ID FROM LIKES WHERE USER_ID =%d);""";
 
 
     // Получение списка всех фильмов
@@ -235,5 +250,9 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         return findMany(GET_FILMS_SORT_BY_RELEASE_DATE, directorId);
     }
 
+
+    public Collection<Long> getFilmRecommendations(Long userId) {
+        return (jdbc.queryForList(String.format(GET_FILM_RECOMMENDATIONS, userId, userId), Long.class));
+    }
 
 }
