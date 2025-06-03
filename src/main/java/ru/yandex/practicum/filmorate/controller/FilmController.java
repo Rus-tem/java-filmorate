@@ -47,7 +47,7 @@ public class FilmController {
 
     // Удаление лайка
     @DeleteMapping("/{filmId}/like/{userId}")
-    public Film deleteLike(@PathVariable Long filmId, @PathVariable Long userId) {
+    public Film deleteFriend(@PathVariable Long filmId, @PathVariable Long userId) {
         return filmService.deleteLike(filmId, userId);
     }
 
@@ -64,9 +64,16 @@ public class FilmController {
         return filmService.getPopularFilms(count, genreId, year);
     }
 
+    // Получение фильма по ID
     @GetMapping("/{filmId}")
     public Film getFilmWithId(@PathVariable Long filmId) {
         return filmService.getFilmWithId(filmId);
+    }
+
+    //    Получение фильма с сортировкой по количеству лайков и году
+    @GetMapping("/director/{directorId}{sortBy}")
+    public Collection<Film> getFilmSortByLikesOrYears(@PathVariable Long directorId, @RequestParam String sortBy) {
+        return filmService.getFilmSortByLikesOrYears(directorId, sortBy);
     }
 
     @GetMapping("/common")

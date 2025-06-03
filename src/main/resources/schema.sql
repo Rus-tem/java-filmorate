@@ -66,3 +66,15 @@ CREATE UNIQUE INDEX IF NOT EXISTS reviews ON REVIEW_LIKES(review_id, user_id);
 
 
 
+create TABLE IF NOT EXISTS DIRECTOR (
+director_id integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+director_name varchar(255),
+CONSTRAINT director_pk PRIMARY KEY (director_id)
+);
+
+create TABLE IF NOT EXISTS FILM_DIRECTORS (
+film_id integer REFERENCES films(film_id),
+director_id integer REFERENCES director(director_id),
+PRIMARY KEY (film_id, director_id)
+);
+
