@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.*;
 import ru.yandex.practicum.filmorate.storage.mappers.DirectorDbStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -86,6 +87,7 @@ public class FilmService {
     }
 
     // Добавление лайка фильму
+
     public Film addLike(Long userId, Long filmId) {
         filmDbStorage.addLike(userId, filmId);
         return filmDbStorage.getById(filmId);
@@ -216,4 +218,19 @@ public class FilmService {
     }
 
 
+    // Получение списка рекомендованных фильмов
+
+    public Collection<Film> getFilmRecommendations(Long userId) {
+        if (userId == null || userId < 0 || userId == 0) {
+            throw new ValidationException("не правильный id пользователя");
+        }
+
+        Collection<Long> filmsRecommendations = filmDbStorage.getFilmRecommendations(userId);
+        if (filmsRecommendations.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Set<Long> filmsRecommend = new HashSet<>(filmDbStorage.getFilmRecommendations(userId));
+
+        return filmsRecommend.stream().map(this::getFilmWithId).collect(Collectors.toList());
+    }
 }
