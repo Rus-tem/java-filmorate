@@ -64,16 +64,19 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             GROUP BY f.film_id, f.name, G.GENRE_ID
             ORDER BY likes_count DESC;""";
     private static final String FIND_POPULAR_FILMS_SQL =
-            "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name AS mpa_name, g.genre_id, g.genre_name AS genre_name, " +
+            "SELECT f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name AS mpa_name, " +
+            "g.genre_id, g.genre_name AS genre_name, d.director_id, d.director_name AS director_name, " +
             "COUNT(l.user_id) AS likes_count " +
             "FROM films f " +
             "LEFT JOIN likes l ON f.film_id = l.film_id " +
             "LEFT JOIN film_genres fg ON f.film_id = fg.film_id " +
             "LEFT JOIN genre g ON fg.genre_id = g.genre_id " +
             "LEFT JOIN mpa m ON f.mpa_id = m.mpa_id " +
+            "LEFT JOIN film_directors fd ON f.film_id = fd.film_id " +
+            "LEFT JOIN director d ON fd.director_id = d.director_id " +
             "WHERE (? IS NULL OR g.genre_id = ?) " +
             "AND (? IS NULL OR EXTRACT(YEAR FROM f.release_date) = ?) " +
-            "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name " +
+            "GROUP BY f.film_id, f.name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name, d.director_id, d.director_name " +
             "ORDER BY likes_count DESC " +
             "LIMIT ?";
     private static final String GET_BY_ID_QUERY = """
