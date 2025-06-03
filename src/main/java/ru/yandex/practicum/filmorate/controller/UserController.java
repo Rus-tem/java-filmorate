@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -76,4 +77,8 @@ public class UserController {
         return userService.deleteUser(userId);
     }
 
+    @GetMapping("/{id}/feed")
+    public Collection <Feed> getFeed (Long id) {
+    return null;
+    }
 }

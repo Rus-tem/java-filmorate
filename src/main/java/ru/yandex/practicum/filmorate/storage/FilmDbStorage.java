@@ -8,13 +8,11 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.storage.mappers.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractorDirectors;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Primary
@@ -114,7 +112,9 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     // Получение списка всех фильмов
     @Override
     public List<Film> getAllFilms() {
-        return findMany(FIND_ALL_FILMS);
+        Set<Film> filmsUnik = new HashSet<>(findMany(FIND_ALL_FILMS));
+        return new ArrayList<>(filmsUnik);
+       // return findMany(FIND_ALL_FILMS);
     }
 
     // Создание фильма в таблице films
@@ -129,8 +129,8 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 film.getMpa().getId()
         );
         film.setId(id);
-        List<Genre> genres = new ArrayList<>(film.getGenres());
-        genres.sort(Comparator.comparing(Genre::getId));
+//        List<Genre> genres = new ArrayList<>(film.getGenres());
+//        genres.sort(Comparator.comparing(Genre::getId));
 
         for (Genre genre : film.getGenres()) {
             jdbc.update(CREATE_GENRE, film.getId(), genre.getId());

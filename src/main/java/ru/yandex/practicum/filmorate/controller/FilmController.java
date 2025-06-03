@@ -24,7 +24,7 @@ public class FilmController {
     // Получаем список всех фильмов
     @GetMapping()
     public Collection<Film> getAllFilms() {
-        return filmService.getAllFilmsTest();
+        return filmService.getAllFilms();
     }
 
     // Добавление фильма
