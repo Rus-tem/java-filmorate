@@ -144,18 +144,19 @@ public class UserService {
         }
         User user = userDbStorage.findById(userId).get();
         userDbStorage.deleteUser(userId);
+        feedDbStorage.deleteFeed(userId);
         return user;
     }
 
     // Получение ленты событий пользователя
     public Collection<Feed> getFeed(Long userId) {
-//        if (userId == null || userId <= 0) {
-//            throw new ValidationException("Некорректное id пользователя");
-//        }
-//        if (userDbStorage.findById(userId).isEmpty()) {
-//            throw new NotFoundException("Пользователь не найден");
-//        }
-        //Optional<Feed> optionalFeed = userDbStorage.getFeed(userId);
+        if (userId == null || userId <= 0) {
+            throw new ValidationException("Некорректное id пользователя");
+        }
+        if (userDbStorage.findById(userId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
+        // Optional<Feed> optionalFeed = userDbStorage.getFeed(userId);
         // List<Feed> feed = optionalFeed.get();
 
         return feedDbStorage.getFeed(userId);

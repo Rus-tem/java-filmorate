@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.storage.mappers;
+package ru.yandex.practicum.filmorate.storage;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.BaseStorage;
 
 import java.util.Collection;
 import java.util.Optional;

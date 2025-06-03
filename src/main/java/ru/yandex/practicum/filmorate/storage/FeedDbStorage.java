@@ -18,19 +18,20 @@ public class FeedDbStorage extends BaseStorage {
         super(jdbc, mapper);
     }
 
-    private static final String FIND_ALL_MPA = "SELECT * FROM mpa";
-    private static final String FIND_MPA = "SELECT * FROM mpa WHERE mpa_id = ?";
     private static final String GET_FEED = """
             select * from feed  WHERE userid = ?;""";
-    //select f.*
-    //from FEED f
-    //  WHERE user_id = ?;""";
+
     private static final String CREATE_FEED = """
             INSERT INTO feed(timestamp_id, userid, eventType, operation, entityId) VALUES(?, ?, ?, ?, ?);""";
+    private static final String DELETE_FEED = "DELETE FROM feed WHERE userid = ? ";
 
     // Получение списка событий пользователя
     public Collection<Feed> getFeed(Long userId) {
         return findMany(GET_FEED, userId);
+    }
+
+    public void deleteFeed(long id) {
+        jdbc.update(DELETE_FEED, id);
     }
 
     public Feed createFeed(Feed feed) {

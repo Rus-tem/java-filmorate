@@ -42,7 +42,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String FIND_ALL_FILMS = """
             SELECT F.*, M.*,  g.*, fg.*, FD.*, D.*
             FROM FILMS f
-            JOIN MPA m ON f.mpa_id = m.mpa_id
+            LEFT JOIN MPA m ON f.mpa_id = m.mpa_id
             LEFT JOIN FILM_GENRES fg ON F.film_id = fg.film_id
             LEFT JOIN GENRE g ON fg.genre_id = g.genre_id
             LEFT JOIN FILM_DIRECTORS FD ON f.film_id = fd.film_id
