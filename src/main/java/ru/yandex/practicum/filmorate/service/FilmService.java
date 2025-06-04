@@ -43,14 +43,14 @@ public class FilmService {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
 
-   // public Collection<Film> getAllFilmsTest() {
-   //     Set<Film> listAllFilms = new HashSet<>();
-   //     List<Film> filmsId = filmDbStorage.getAllFilms();
-   //     for (Film filmId : filmsId) {
-   //         Film film = filmDbStorage.getById(filmId.getId());
-  //          listAllFilms.add(film);
- //       }
- //       return listAllFilms.stream().toList().reversed();
+    // public Collection<Film> getAllFilmsTest() {
+    //     Set<Film> listAllFilms = new HashSet<>();
+    //     List<Film> filmsId = filmDbStorage.getAllFilms();
+    //     for (Film filmId : filmsId) {
+    //         Film film = filmDbStorage.getById(filmId.getId());
+    //          listAllFilms.add(film);
+    //       }
+    //       return listAllFilms.stream().toList().reversed();
 //    }
 
 
@@ -90,7 +90,7 @@ public class FilmService {
     // Добавление лайка фильму
     public Film addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
-        userService.addFeed(userId,"LIKE", "ADD", filmId);
+        userService.addFeed(userId, "LIKE", "ADD", filmId);
         return filmDbStorage.findById(filmId).get();
     }
 
@@ -103,7 +103,7 @@ public class FilmService {
             throw new NotFoundException("Такой пользователь не существует");
         }
         filmDbStorage.deleteLike(filmId, userId);
-        userService.addFeed(userId,"LIKE", "REMOVE", filmId);
+        userService.addFeed(userId, "LIKE", "REMOVE", filmId);
         return filmDbStorage.findById(filmId).get();
     }
 

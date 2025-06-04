@@ -6,6 +6,7 @@ import ru.yandex.practicum.filmorate.model.Feed;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
 @Component
 public class FeedMapper implements RowMapper<Feed> {
     @Override
