@@ -64,6 +64,12 @@ public class FilmController {
         return filmService.getPopularFilms(count, genreId, year);
     }
 
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam(required = false) String by) {
+
+        return filmService.search(query, by);
+    }
+
     // Получение фильма по ID
     @GetMapping("/{filmId}")
     public Film getFilmWithId(@PathVariable Long filmId) {

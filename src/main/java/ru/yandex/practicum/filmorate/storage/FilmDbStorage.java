@@ -11,11 +11,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractorDirectors;
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 @Primary
@@ -267,6 +263,21 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return getCommonFilms(GET_COMMON_FILMS, userId, friendId);
+    }
+
+    public Collection<Film> search(String query, Set<String> byParam) {
+        if (byParam.size() == 2) {
+            List<Film> find = findMany(GET_POPULAR_FILMS);
+            return find.stream().filter(film -> film.getName().toLowerCase().contains(query.toLowerCase())
+                                                || film.getDirectors().stream().anyMatch(director -> director.getName().toLowerCase().contains(query.toLowerCase())))
+                    .toList();
+        }
+        if (byParam.size() == 1 && byParam.contains("director")) {
+            List<Film> find = findMany(GET_POPULAR_FILMS);
+            return find.stream().filter(film -> film.getDirectors().stream().anyMatch(director -> director.getName().toLowerCase().contains(query.toLowerCase()))).toList();
+        }
+        List<Film> find = findMany(GET_POPULAR_FILMS);
+        return find.stream().filter(film -> film.getName().toLowerCase().contains(query.toLowerCase())).toList();
     }
 
     //Список фильмов отсортированных по лайкам
