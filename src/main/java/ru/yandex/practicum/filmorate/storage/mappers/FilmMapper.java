@@ -13,12 +13,12 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 @Component
 public class FilmMapper implements RowMapper<Film> {
-    Map<Integer,Film> filmMapperMap = new HashMap<>();
+    Map<Integer, Film> filmMapperMap = new HashMap<>();
+
     @Override
     public Film mapRow(ResultSet rs, int rowNum) throws SQLException {
 
@@ -27,7 +27,7 @@ public class FilmMapper implements RowMapper<Film> {
 
         Film film = filmMapperMap.get(filmId);
         if (film == null) {
-            film =new Film();
+            film = new Film();
             film.setId(rs.getLong("film_id"));
             film.setName(rs.getString("name"));
             film.setDescription(rs.getString("description"));
@@ -47,13 +47,12 @@ public class FilmMapper implements RowMapper<Film> {
         }
 
 
-
         //film.setGenres(new LinkedHashSet<>());
-      //  film.setDirectors(new LinkedHashSet<>());
+        //  film.setDirectors(new LinkedHashSet<>());
 
         Integer genreFilm = rs.getObject("genre_id", Integer.class);
         if (genreFilm != null) {
-           // Set<Genre> genres = new LinkedHashSet<>();
+            // Set<Genre> genres = new LinkedHashSet<>();
             Genre genre = new Genre();
             genre.setId(rs.getLong("genre_id"));
             genre.setName(rs.getString("genre_name"));
@@ -64,13 +63,13 @@ public class FilmMapper implements RowMapper<Film> {
 
         Integer directorFilm = rs.getObject("director_id", Integer.class);
         if (directorFilm != null) {
-          //  Set<Director> director = new LinkedHashSet<>();
+            //  Set<Director> director = new LinkedHashSet<>();
             Director newDirector = new Director();
             newDirector.setId(rs.getLong("director_id"));
             newDirector.setName(rs.getString("director_name"));
             film.getDirectors().add(newDirector);
-        //    director.add(newDirector);
-          //  film.setDirectors(director);
+            //    director.add(newDirector);
+            //  film.setDirectors(director);
 
         }
 

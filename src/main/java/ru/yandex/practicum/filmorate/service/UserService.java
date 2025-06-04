@@ -12,7 +12,6 @@ import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j
@@ -78,7 +77,7 @@ public class UserService {
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.addFriend(id, friendId);
-        addFeed(id,"FRIEND", "ADD", friendId); // добавление в ленту событий
+        addFeed(id, "FRIEND", "ADD", friendId); // добавление в ленту событий
         return listFriends;
     }
 
@@ -131,7 +130,7 @@ public class UserService {
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.deleteFriend(id, friendId);
-        addFeed(id,"FRIEND", "REMOVE", friendId); // добавление в ленту событий
+        addFeed(id, "FRIEND", "REMOVE", friendId); // добавление в ленту событий
 
         return listFriends;
     }
@@ -149,7 +148,7 @@ public class UserService {
     }
 
     // Получение ленты событий пользователя
-    public Collection<Feed> getFeed (Long userId) {
+    public Collection<Feed> getFeed(Long userId) {
 //        if (userId == null || userId <= 0) {
 //            throw new ValidationException("Некорректное id пользователя");
 //        }
@@ -157,13 +156,13 @@ public class UserService {
 //            throw new NotFoundException("Пользователь не найден");
 //        }
         //Optional<Feed> optionalFeed = userDbStorage.getFeed(userId);
-       // List<Feed> feed = optionalFeed.get();
+        // List<Feed> feed = optionalFeed.get();
 
         return feedDbStorage.getFeed(userId);
     }
 
     //Добавление в ленту событий
-    protected Feed addFeed (Long userId, String eventType, String operation, Long entityId) {
+    protected Feed addFeed(Long userId, String eventType, String operation, Long entityId) {
         Feed feed = new Feed();
         Timestamp currentTimestamp = new Timestamp(new Date().getTime());
         feed.setTimestamp(currentTimestamp);

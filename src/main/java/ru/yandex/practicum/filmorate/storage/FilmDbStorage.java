@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.mappers.FilmMapper;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
 import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractorDirectors;
 
@@ -149,7 +148,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     public List<Film> getAllFilms() {
         Set<Film> filmsUnik = new HashSet<>(findMany(FIND_ALL_FILMS));
         return new ArrayList<>(filmsUnik);
-       // return findMany(FIND_ALL_FILMS);
+        // return findMany(FIND_ALL_FILMS);
     }
 
     // Создание фильма в таблице films
@@ -165,7 +164,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         );
         film.setId(id);
         List<Genre> genres = new ArrayList<>(film.getGenres());
-         genres.sort(Comparator.comparing(Genre::getId));
+        genres.sort(Comparator.comparing(Genre::getId));
 
         for (Genre genre : film.getGenres()) {
             jdbc.update(CREATE_GENRE, film.getId(), genre.getId());
@@ -210,11 +209,11 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         for (Director director : newFilm.getDirectors()) {
             jdbc.update(CREATE_DIRECTORS, newFilm.getId(), director.getId());
         }
-            newFilm.setGenres(new LinkedHashSet<>(genres));
+        newFilm.setGenres(new LinkedHashSet<>(genres));
 
         // for (Genre genre : newFilm.getGenres()) {
-         //   jdbc.update(UPDATE_GENRE, genre.getId(), newFilm.getId());
-       // }
+        //   jdbc.update(UPDATE_GENRE, genre.getId(), newFilm.getId());
+        // }
         return newFilm;
     }
 
