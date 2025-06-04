@@ -269,7 +269,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         if (byParam.size() == 2) {
             List<Film> find = findMany(GET_POPULAR_FILMS);
             return find.stream().filter(film -> film.getName().toLowerCase().contains(query)
-                                                && film.getDirectors().stream().anyMatch(director -> director.getName().toLowerCase().contains(query)))
+                                                || film.getDirectors().stream().anyMatch(director -> director.getName().toLowerCase().contains(query)))
                     .toList();
         }
         if (byParam.size() == 1 && byParam.contains("director")) {
