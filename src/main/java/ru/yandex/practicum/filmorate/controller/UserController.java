@@ -3,8 +3,10 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
@@ -16,11 +18,14 @@ public class UserController {
     private final UserStorage userStorage;
     private final UserService userService;
 
+    private final FilmService filmService;
+
 
     @Autowired
-    public UserController(UserStorage userStorage, UserService userService) {
+    public UserController(UserStorage userStorage, UserService userService, FilmService filmService) {
         this.userStorage = userStorage;
         this.userService = userService;
+        this.filmService = filmService;
     }
 
     //Получение списка всех пользователей +
@@ -75,6 +80,13 @@ public class UserController {
     @DeleteMapping("/{userId}")
     public User deleteUser(@PathVariable Long userId) {
         return userService.deleteUser(userId);
+    }
+
+
+    // Получение списка рекомендованных фильмов
+    @GetMapping("/{userId}/recommendations")
+    public Collection<Film> getFilmRecommendations(@PathVariable Long userId) {
+        return filmService.getFilmRecommendations(userId);
     }
 
     @GetMapping("/{id}/feed")

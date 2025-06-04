@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.storage.*;
 import ru.yandex.practicum.filmorate.storage.mappers.DirectorDbStorage;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -41,6 +42,17 @@ public class FilmService {
     public List<Film> getAllFilms() {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
+
+   // public Collection<Film> getAllFilmsTest() {
+   //     Set<Film> listAllFilms = new HashSet<>();
+   //     List<Film> filmsId = filmDbStorage.getAllFilms();
+   //     for (Film filmId : filmsId) {
+   //         Film film = filmDbStorage.getById(filmId.getId());
+  //          listAllFilms.add(film);
+ //       }
+ //       return listAllFilms.stream().toList().reversed();
+//    }
+
 
     // Создание фильма в таблице films
     public Film createFilm(Film film) {
@@ -96,24 +108,36 @@ public class FilmService {
     }
 
     // Получение списка отмеченных лайком (список популярных фильмов)
-    public Collection<Film> getPopularFilms(Long count) {
-        if (count == 0) {
-            return filmDbStorage.getPopularFilms().stream().limit(10).toList();
-        } else {
-            return filmDbStorage.getPopularFilms().stream().limit(count).toList();
+    public Collection<Film> getPopularFilms(Long count, Long genreId, Long year) {
+        if (count != null && count < 0) {
+            throw new ValidationException("Количество фильмов не может быть отрицательным");
         }
+        if (genreId != null && (genreId <= 0 || genreId > 6)) {
+            throw new ValidationException("Жанр должен быть от 1 до 6");
+        }
+        if (year != null && year < 1895) {
+            throw new ValidationException("Год выпуска фильма не может быть раньше 1895");
+        }
+
+        Long actualCount = count == null || count == 0 ? 10L : count;
+
+        return filmDbStorage.getPopularFilms(actualCount, genreId, year);
     }
 
-    //Получение всех фильмов новый тест
-    public Collection<Film> getAllFilmsTest() {
-        Set<Film> listAllFilms = new HashSet<>();
-        List<Film> filmsId = filmDbStorage.getAllFilms();
-        for (Film filmId : filmsId) {
-            Film film = filmDbStorage.getById(filmId.getId());
-            listAllFilms.add(film);
+    public Collection<Film> search(String query, String by) {
+        if (query == null || query.isBlank() || by.isBlank()) {
+            throw new ValidationException("Пустой запрос");
         }
-        return listAllFilms.stream().toList().reversed();
+        Set<String> byParam = Arrays.stream(by.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+        if (!byParam.contains("title") && !byParam.contains("director")) {
+            throw new ValidationException("Неправильный параметр");
+        }
+
+        return filmDbStorage.search(query, byParam);
     }
+
 
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
@@ -209,4 +233,19 @@ public class FilmService {
     }
 
 
+    // Получение списка рекомендованных фильмов
+
+    public Collection<Film> getFilmRecommendations(Long userId) {
+        if (userId == null || userId < 0 || userId == 0) {
+            throw new ValidationException("не правильный id пользователя");
+        }
+
+        Collection<Long> filmsRecommendations = filmDbStorage.getFilmRecommendations(userId);
+        if (filmsRecommendations.isEmpty()) {
+            return Collections.emptyList();
+        }
+        Set<Long> filmsRecommend = new HashSet<>(filmDbStorage.getFilmRecommendations(userId));
+
+        return filmsRecommend.stream().map(this::getFilmWithId).collect(Collectors.toList());
+    }
 }

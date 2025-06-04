@@ -50,12 +50,10 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
             SET content = ?, is_positive = ?
             WHERE review_id = ?;""";
 
-    private static final String ADD_LIKE_DISLIKE_REVIEW =
-            "MERGE INTO REVIEW_LIKES (review_id, user_id, likes) KEY (review_id, user_id) VALUES(?,?,?);";
+    private static final String ADD_LIKE_DISLIKE_REVIEW = "MERGE INTO REVIEW_LIKES (review_id, user_id, likes) KEY (review_id, user_id) VALUES(?,?,?);";
 
 
-    private static final String DELETE_LIKE_DISLIKE_REVIEW =
-            "DELETE REVIEW_LIKES WHERE review_id=? AND user_id=? AND likes=?;";
+    private static final String DELETE_LIKE_DISLIKE_REVIEW = "DELETE REVIEW_LIKES WHERE review_id=? AND user_id=? AND likes=?;";
 
     private static final String DELETE_REVIEW_BY_ID = "DELETE FROM REVIEWS WHERE review_id =?";
     private static final String DELETE_REVIEW_LIKES_BY_ID = "DELETE FROM REVIEW_LIKES WHERE review_id =?";
@@ -85,12 +83,7 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
     //создание отзыва
     @Override
     public Review create(Review review) {
-        long id = insert(CREATE_NEW_REVIEW,
-                review.getContent(),
-                review.getIsPositive(),
-                review.getUserId(),
-                review.getFilmId()
-        );
+        long id = insert(CREATE_NEW_REVIEW, review.getContent(), review.getIsPositive(), review.getUserId(), review.getFilmId());
         review.setReviewId(id);
         return review;
     }
@@ -98,11 +91,7 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
     //обновление отзыва
     @Override
     public Review update(Review newReview) {
-        update(UPDATE_REVIEW,
-                newReview.getContent(),
-                newReview.getIsPositive(),
-                newReview.getReviewId()
-        );
+        update(UPDATE_REVIEW, newReview.getContent(), newReview.getIsPositive(), newReview.getReviewId());
         Review review = getReviewById(newReview.getReviewId());
         return review;
     }
@@ -116,30 +105,18 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
     //ставим лайк/дизлайк отзыву
     public void addLikeDislikeReviewId(Long reviewId, Long userId, Boolean like) {
         if (like) {
-            jdbc.update(ADD_LIKE_DISLIKE_REVIEW,
-                    reviewId,
-                    userId,
-                    1);
+            jdbc.update(ADD_LIKE_DISLIKE_REVIEW, reviewId, userId, 1);
         } else {
-            jdbc.update(ADD_LIKE_DISLIKE_REVIEW,
-                    reviewId,
-                    userId,
-                    -1);
+            jdbc.update(ADD_LIKE_DISLIKE_REVIEW, reviewId, userId, -1);
         }
     }
 
     //удаляем лайк/дизлайк отзыва
     public void deleteLikeDislikeReviewId(Long reviewId, Long userId, Boolean like) {
         if (like) {
-            jdbc.update(DELETE_LIKE_DISLIKE_REVIEW,
-                    reviewId,
-                    userId,
-                    1);
+            jdbc.update(DELETE_LIKE_DISLIKE_REVIEW, reviewId, userId, 1);
         } else {
-            jdbc.update(DELETE_LIKE_DISLIKE_REVIEW,
-                    reviewId,
-                    userId,
-                    -1);
+            jdbc.update(DELETE_LIKE_DISLIKE_REVIEW, reviewId, userId, -1);
         }
     }
 
