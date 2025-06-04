@@ -171,6 +171,20 @@ public class FilmService {
         return filmDbStorage.getCommonFilms(userId, friendId);
     }
 
+    public Collection<Film> search(String query, String by) {
+        if (query == null || query.isBlank() || by.isBlank()) {
+            throw new ValidationException("Пустой запрос");
+        }
+        Set<String> byParam = Arrays.stream(by.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+        if (!byParam.contains("title") && !byParam.contains("director")) {
+            throw new ValidationException("Неправильный параметр");
+        }
+
+        return filmDbStorage.search(query, byParam);
+    }
+
     // Получение списка всех режиссеров(directors)
     public Collection<Director> getAllDirectors() {
         return directorDbStorage.getAllDirectors();
