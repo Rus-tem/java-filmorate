@@ -129,8 +129,8 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 film.getMpa().getId()
         );
         film.setId(id);
-//        List<Genre> genres = new ArrayList<>(film.getGenres());
-//        genres.sort(Comparator.comparing(Genre::getId));
+        List<Genre> genres = new ArrayList<>(film.getGenres());
+         genres.sort(Comparator.comparing(Genre::getId));
 
         for (Genre genre : film.getGenres()) {
             jdbc.update(CREATE_GENRE, film.getId(), genre.getId());
@@ -138,7 +138,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         for (Director director : film.getDirectors()) {
             jdbc.update(CREATE_DIRECTORS, film.getId(), director.getId());
         }
-
+        film.setGenres(new LinkedHashSet<>(genres));
         return film;
     }
 
@@ -175,7 +175,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         for (Director director : newFilm.getDirectors()) {
             jdbc.update(CREATE_DIRECTORS, newFilm.getId(), director.getId());
         }
-
+            newFilm.setGenres(new LinkedHashSet<>(genres));
         return newFilm;
     }
 

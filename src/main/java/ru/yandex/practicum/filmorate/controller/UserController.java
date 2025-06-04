@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/feed")
-    public Collection <Feed> getFeed (Long id) {
-    return null;
+    public Collection <Feed> getFeed (@PathVariable Long id) {
+    return userService.getFeed(id);
     }
 }

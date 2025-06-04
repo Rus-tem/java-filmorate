@@ -13,10 +13,11 @@ import java.util.Collection;
 public class ReviewService {
 
     private final ReviewDbStorage reviewDbStorage;
+    private final UserService userService;
 
-
-    public ReviewService(ReviewDbStorage reviewDbStorage) {
+    public ReviewService(ReviewDbStorage reviewDbStorage, UserService userService) {
         this.reviewDbStorage = reviewDbStorage;
+        this.userService = userService;
     }
 
     // возращаем список отзывов
@@ -47,11 +48,15 @@ public class ReviewService {
         if (review.getIsPositive() == null) {
             throw new NullPointerException("не должен быть null");
         }
+
+        userService.addFeed(review.getUserId(), "REVIEW", "ADD", review.getReviewId());
         return reviewDbStorage.create(review);
     }
 
     //удаление отзыва
     public void deleteReview(Long reviewId) {
+        Review review = getReviewById(reviewId);
+        userService.addFeed(review.getUserId(), "REVIEW", "REMOVE", reviewId);
         reviewDbStorage.delete(reviewId);
     }
 
@@ -69,6 +74,7 @@ public class ReviewService {
         if (newReview.getIsPositive() == null) {
             throw new NullPointerException("не должен быть null");
         }
+        userService.addFeed(newReview.getUserId(), "REVIEW", "UPDATE", newReview.getReviewId());
 
         return reviewDbStorage.update(newReview);
     }

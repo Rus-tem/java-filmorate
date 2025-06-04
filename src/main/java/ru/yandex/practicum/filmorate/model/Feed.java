@@ -2,10 +2,12 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
 
+import java.sql.Timestamp;
+
 @Data
 public class Feed {
 
-    private Long timestamp;
+    private Timestamp timestamp;
     private Long userId;
     private String eventType;
     private String operation;

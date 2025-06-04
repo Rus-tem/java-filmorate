@@ -76,5 +76,11 @@ PRIMARY KEY (film_id, director_id)
 );
 
 create TABLE IF NOT EXISTS FEED (
-time timestamp
+timestamp_id timestamp,
+userid integer NOT NULL,
+eventType varchar(255) NOT NULL,
+operation varchar(255) NOT NULL,
+eventId integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+entityId integer,
+CONSTRAINT feed_pk PRIMARY KEY (eventId)
 );

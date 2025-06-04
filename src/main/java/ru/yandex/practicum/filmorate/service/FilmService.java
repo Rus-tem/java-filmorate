@@ -24,16 +24,17 @@ public class FilmService {
     private final GenreDbStorage genreDbStorage;
     private final DirectorDbStorage directorDbStorage;
     private final UserDbStorage userDbStorage;
-
+    private final UserService userService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage) {
+    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage, UserService userService) {
 
         this.filmDbStorage = filmDbStorage;
         this.mpaDbStorage = mpaDbStorage;
         this.genreDbStorage = genreDbStorage;
         this.directorDbStorage = directorDbStorage;
         this.userDbStorage = userDbStorage;
+        this.userService = userService;
     }
 
     // Получение всех из таблицы films
@@ -77,6 +78,7 @@ public class FilmService {
     // Добавление лайка фильму
     public Film addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
+        userService.addFeed(userId,"LIKE", "ADD", filmId);
         return filmDbStorage.findById(filmId).get();
     }
 
@@ -89,6 +91,7 @@ public class FilmService {
             throw new NotFoundException("Такой пользователь не существует");
         }
         filmDbStorage.deleteLike(filmId, userId);
+        userService.addFeed(userId,"LIKE", "REMOVE", filmId);
         return filmDbStorage.findById(filmId).get();
     }
 

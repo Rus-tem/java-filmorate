@@ -4,8 +4,10 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,4 +102,7 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
     public void deleteUser(long userId) {
         jdbc.update(DELETE_USER, userId, userId, userId, userId);
     }
+
+
+
 }
