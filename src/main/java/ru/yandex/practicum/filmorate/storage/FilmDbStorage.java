@@ -261,6 +261,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         );
     }
 
+    public List<Film> getCommonFilms(Long userId, Long friendId) {
+        return getCommonFilms(GET_COMMON_FILMS, userId, friendId);
+    }
+
     public Collection<Film> search(String query, Set<String> byParam) {
         if (byParam.size() == 2) {
             List<Film> find = findMany(GET_POPULAR_FILMS);
@@ -274,10 +278,6 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         }
         List<Film> find = findMany(GET_POPULAR_FILMS);
         return find.stream().filter(film -> film.getName().toLowerCase().contains(query.toLowerCase())).toList();
-    }
-
-    public List<Film> getCommonFilms(Long userId, Long friendId) {
-        return getCommonFilms(GET_COMMON_FILMS, userId, friendId);
     }
 
     //Список фильмов отсортированных по лайкам

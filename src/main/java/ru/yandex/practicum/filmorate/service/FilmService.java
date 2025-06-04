@@ -122,6 +122,19 @@ public class FilmService {
         return filmDbStorage.getPopularFilms(actualCount, genreId, year);
     }
 
+    public Collection<Film> search(String query, String by) {
+        if (query == null || query.isBlank() || by.isBlank()) {
+            throw new ValidationException("Пустой запрос");
+        }
+        Set<String> byParam = Arrays.stream(by.split(","))
+                .map(String::trim)
+                .collect(Collectors.toSet());
+        if (!byParam.contains("title") && !byParam.contains("director")) {
+            throw new ValidationException("Неправильный параметр");
+        }
+
+        return filmDbStorage.search(query, byParam);
+    }
 
 
     // Получение фильма по ID
@@ -169,20 +182,6 @@ public class FilmService {
             throw new NotFoundException("Пользователь не найден");
         }
         return filmDbStorage.getCommonFilms(userId, friendId);
-    }
-
-    public Collection<Film> search(String query, String by) {
-        if (query == null || query.isBlank() || by.isBlank()) {
-            throw new ValidationException("Пустой запрос");
-        }
-        Set<String> byParam = Arrays.stream(by.split(","))
-                .map(String::trim)
-                .collect(Collectors.toSet());
-        if (!byParam.contains("title") && !byParam.contains("director")) {
-            throw new ValidationException("Неправильный параметр");
-        }
-
-        return filmDbStorage.search(query, byParam);
     }
 
     // Получение списка всех режиссеров(directors)
