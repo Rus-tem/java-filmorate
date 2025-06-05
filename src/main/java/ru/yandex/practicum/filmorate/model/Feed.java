@@ -7,7 +7,7 @@ import java.sql.Timestamp;
 @Data
 public class Feed {
 
-    private Timestamp timestamp;
+    private Long timestamp;
     private Long userId;
     private String eventType;
     private String operation;

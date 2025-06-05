@@ -76,7 +76,7 @@ PRIMARY KEY (film_id, director_id)
 );
 
 create TABLE IF NOT EXISTS FEED (
-timestamp_id timestamp,
+timestamp_id BIGINT,
 userid integer NOT NULL,
 eventType varchar(255) NOT NULL,
 operation varchar(255) NOT NULL,
