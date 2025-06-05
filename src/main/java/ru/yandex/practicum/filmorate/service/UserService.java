@@ -149,15 +149,12 @@ public class UserService {
 
     // Получение ленты событий пользователя
     public Collection<Feed> getFeed(Long userId) {
-//        if (userId == null || userId <= 0) {
-//            throw new ValidationException("Некорректное id пользователя");
-//        }
-//        if (userDbStorage.findById(userId).isEmpty()) {
-//            throw new NotFoundException("Пользователь не найден");
-//        }
-        //Optional<Feed> optionalFeed = userDbStorage.getFeed(userId);
-        // List<Feed> feed = optionalFeed.get();
-
+        if (userId == null || userId <= 0) {
+            throw new ValidationException("Некорректное id пользователя");
+        }
+        if (userDbStorage.findById(userId).isEmpty()) {
+            throw new NotFoundException("Пользователь не найден");
+        }
         return feedDbStorage.getFeed(userId);
     }
 
@@ -165,7 +162,8 @@ public class UserService {
     protected Feed addFeed(Long userId, String eventType, String operation, Long entityId) {
         Feed feed = new Feed();
         Timestamp currentTimestamp = new Timestamp(new Date().getTime());
-        feed.setTimestamp(currentTimestamp);
+        long milliseconds = currentTimestamp.getTime();
+        feed.setTimestamp(milliseconds);
         feed.setUserId(userId);
         feed.setEventType(eventType);
         feed.setOperation(operation);

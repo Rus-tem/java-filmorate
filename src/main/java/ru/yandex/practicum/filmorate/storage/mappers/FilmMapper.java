@@ -34,7 +34,7 @@ public class FilmMapper implements RowMapper<Film> {
             Date releaseDate = rs.getDate("release_date");
             film.setReleaseDate(releaseDate.toLocalDate());
             film.setDuration(rs.getLong("duration"));
-            //  film.setMpa(new MPA());
+            //film.setMpa(new MPA());
             MPA mpa = new MPA();
             mpa.setId(rs.getLong("mpa_id"));
             mpa.setName(rs.getString("mpa_name"));
