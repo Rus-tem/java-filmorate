@@ -32,7 +32,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             SELECT ?, ?
             WHERE NOT EXISTS (SELECT 1 FROM likes WHERE user_id = ? AND film_id = ?)""";
     private static final String ADD_LIKE1 = """
-     MERGE INTO likes (user_id, film_id) VALUES( ?, ?);""";
+            MERGE INTO likes (user_id, film_id) VALUES( ?, ?);""";
     private static final String DELETE_LIKE = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
     private static final String DELETE_FILM_GENRES = "DELETE FROM FILM_GENRES WHERE film_id = ? AND genre_id = ?";
     private static final String DELETE_FILM_DIRECTOR = "DELETE FROM FILM_DIRECTORS WHERE film_id = ? AND director_id = ?";
@@ -240,8 +240,8 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     }
 
     // Добавление в лайка фильму
-    public void addLike(long  filmId, long userId) {
-      // jdbc.update(ADD_LIKE, userId, filmId, userId, filmId);
+    public void addLike(long filmId, long userId) {
+        // jdbc.update(ADD_LIKE, userId, filmId, userId, filmId);
         jdbc.update(ADD_LIKE1, userId, filmId);
     }
 
@@ -261,7 +261,7 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         return new ArrayList<>(findMany(FIND_POPULAR_FILMS_SQL,
                 genreId, genreId,
                 year, year,
-                count  ));
+                count));
     }
 
     public List<Film> getCommonFilms(Long userId, Long friendId) {

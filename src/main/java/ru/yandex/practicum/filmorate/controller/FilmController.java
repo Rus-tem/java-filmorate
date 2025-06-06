@@ -42,7 +42,7 @@ public class FilmController {
     //Добавление лайка
     @PutMapping("/{filmId}/like/{userId}")
     public void addLike(@PathVariable Long filmId, @PathVariable Long userId) {
-         filmService.addLike(filmId, userId);
+        filmService.addLike(filmId, userId);
     }
 
     // Удаление лайка

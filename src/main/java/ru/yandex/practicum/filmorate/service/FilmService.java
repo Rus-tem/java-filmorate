@@ -42,14 +42,14 @@ public class FilmService {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
 
-     public Collection<Film> getAllFilmsTest() {
-         Set<Film> listAllFilms = new HashSet<>();
-         List<Film> filmsId = filmDbStorage.getAllFilms();
-         for (Film filmId : filmsId) {
-             Film film = filmDbStorage.getById(filmId.getId());
-              listAllFilms.add(film);
-           }
-          // return listAllFilms.stream().toList().reversed();
+    public Collection<Film> getAllFilmsTest() {
+        Set<Film> listAllFilms = new HashSet<>();
+        List<Film> filmsId = filmDbStorage.getAllFilms();
+        for (Film filmId : filmsId) {
+            Film film = filmDbStorage.getById(filmId.getId());
+            listAllFilms.add(film);
+        }
+        // return listAllFilms.stream().toList().reversed();
         return listAllFilms.stream().sorted(Comparator.comparing(Film::getId)).toList();
     }
 
@@ -91,7 +91,7 @@ public class FilmService {
     public void addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
         userService.addFeed(userId, "LIKE", "ADD", filmId);
-      //  return filmDbStorage.findById(filmId).get();
+        //  return filmDbStorage.findById(filmId).get();
     }
 
     // Удаление из лайка фильма
