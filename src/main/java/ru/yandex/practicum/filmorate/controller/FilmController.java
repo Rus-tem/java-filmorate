@@ -24,7 +24,7 @@ public class FilmController {
     // Получаем список всех фильмов
     @GetMapping()
     public Collection<Film> getAllFilms() {
-        return filmService.getAllFilms();
+        return filmService.getAllFilmsTest();
     }
 
     // Добавление фильма
@@ -41,8 +41,8 @@ public class FilmController {
 
     //Добавление лайка
     @PutMapping("/{filmId}/like/{userId}")
-    public Film addLike(@PathVariable Long filmId, @PathVariable Long userId) {
-        return filmService.addLike(userId, filmId);
+    public void addLike(@PathVariable Long filmId, @PathVariable Long userId) {
+         filmService.addLike(filmId, userId);
     }
 
     // Удаление лайка

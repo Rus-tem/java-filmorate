@@ -42,15 +42,16 @@ public class FilmService {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
 
-    // public Collection<Film> getAllFilmsTest() {
-    //     Set<Film> listAllFilms = new HashSet<>();
-    //     List<Film> filmsId = filmDbStorage.getAllFilms();
-    //     for (Film filmId : filmsId) {
-    //         Film film = filmDbStorage.getById(filmId.getId());
-    //          listAllFilms.add(film);
-    //       }
-    //       return listAllFilms.stream().toList().reversed();
-//    }
+     public Collection<Film> getAllFilmsTest() {
+         Set<Film> listAllFilms = new HashSet<>();
+         List<Film> filmsId = filmDbStorage.getAllFilms();
+         for (Film filmId : filmsId) {
+             Film film = filmDbStorage.getById(filmId.getId());
+              listAllFilms.add(film);
+           }
+          // return listAllFilms.stream().toList().reversed();
+        return listAllFilms.stream().sorted(Comparator.comparing(Film::getId)).toList();
+    }
 
 
     // Создание фильма в таблице films
@@ -87,10 +88,10 @@ public class FilmService {
     }
 
     // Добавление лайка фильму
-    public Film addLike(Long filmId, Long userId) {
+    public void addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
         userService.addFeed(userId, "LIKE", "ADD", filmId);
-        return filmDbStorage.findById(filmId).get();
+      //  return filmDbStorage.findById(filmId).get();
     }
 
     // Удаление из лайка фильма
@@ -117,10 +118,14 @@ public class FilmService {
         if (year != null && year < 1895) {
             throw new ValidationException("Год выпуска фильма не может быть раньше 1895");
         }
-
         Long actualCount = count == null || count == 0 ? 10L : count;
-
-        return filmDbStorage.getPopularFilms(actualCount, genreId, year);
+        Set<Film> listAllFilms = new HashSet<>();
+        List<Film> filmsId = filmDbStorage.getPopularFilms(actualCount, genreId, year);
+        for (Film filmId : filmsId) {
+            Film film = filmDbStorage.getById(filmId.getId());
+            listAllFilms.add(film);
+        }
+        return listAllFilms.stream().sorted(Comparator.comparing(Film::getId)).toList();
     }
 
     public Collection<Film> search(String query, String by) {
