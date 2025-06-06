@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 // Метод обновления жанров фильма
-public class FilmResultSetExtractor implements ResultSetExtractor<Film> {
+public class FilmResultSetGenres implements ResultSetExtractor<Film> {
     @Override
     public Film extractData(ResultSet rs) throws SQLException {
         Film film = null;
