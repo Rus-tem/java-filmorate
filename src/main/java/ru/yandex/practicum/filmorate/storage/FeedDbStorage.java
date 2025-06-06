@@ -13,7 +13,6 @@ import java.util.Collection;
 @Primary
 public class FeedDbStorage extends BaseStorage {
 
-
     public FeedDbStorage(JdbcTemplate jdbc, @Qualifier("feedMapper") RowMapper<Feed> mapper) {
         super(jdbc, mapper);
     }
@@ -24,6 +23,7 @@ public class FeedDbStorage extends BaseStorage {
     private static final String CREATE_FEED = """
             INSERT INTO feed(timestamp_id, userid, eventType, operation, entityId) VALUES(?, ?, ?, ?, ?);""";
     private static final String DELETE_FEED = "DELETE FROM feed WHERE userid = ? ";
+    private static final String DELETE_FEED_BY_ENTITY_ID = "DELETE FROM feed WHERE entityId = ? ";
 
     // Получение списка событий пользователя
     public Collection<Feed> getFeed(Long userId) {
@@ -32,6 +32,10 @@ public class FeedDbStorage extends BaseStorage {
 
     public void deleteFeed(long id) {
         jdbc.update(DELETE_FEED, id);
+    }
+
+    public void deleteFeedByEntityId(long id) {
+        jdbc.update(DELETE_FEED_BY_ENTITY_ID, id);
     }
 
     public Feed createFeed(Feed feed) {

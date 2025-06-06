@@ -77,7 +77,7 @@ public class UserService {
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.addFriend(id, friendId);
-        addFeed(id, "FRIEND", "ADD", friendId); // добавление в ленту событий
+        addFeed(id, "FRIEND", "ADD", friendId);
         return listFriends;
     }
 
@@ -135,6 +135,7 @@ public class UserService {
         return listFriends;
     }
 
+    // Удаление пользователя
     public User deleteUser(Long userId) {
         if (userId == null || userId <= 0) {
             throw new ValidationException("Некорректное id пользователя");
@@ -156,9 +157,6 @@ public class UserService {
         if (userDbStorage.findById(userId).isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        // Optional<Feed> optionalFeed = userDbStorage.getFeed(userId);
-        // List<Feed> feed = optionalFeed.get();
-
         return feedDbStorage.getFeed(userId);
     }
 
@@ -174,7 +172,6 @@ public class UserService {
         feed.setEntityId(entityId);
         return feedDbStorage.createFeed(feed);
     }
-
 
 }
 

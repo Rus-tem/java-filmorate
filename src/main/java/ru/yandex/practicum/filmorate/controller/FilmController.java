@@ -12,19 +12,17 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
         this.filmService = filmService;
     }
 
     // Получаем список всех фильмов
     @GetMapping()
     public Collection<Film> getAllFilms() {
-        return filmService.getAllFilmsTest();
+        return filmService.getAllFilms();
     }
 
     // Добавление фильма
@@ -51,6 +49,7 @@ public class FilmController {
         return filmService.deleteLike(filmId, userId);
     }
 
+    // Удаление фильма
     @DeleteMapping("/{filmId}")
     public Film deleteFilm(@PathVariable Long filmId) {
         return filmService.deleteFilm(filmId);
@@ -76,12 +75,13 @@ public class FilmController {
         return filmService.getFilmWithId(filmId);
     }
 
-    //    Получение фильма с сортировкой по количеству лайков и году
+    // Получение фильма с сортировкой по количеству лайков и году
     @GetMapping("/director/{directorId}{sortBy}")
     public Collection<Film> getFilmSortByLikesOrYears(@PathVariable Long directorId, @RequestParam String sortBy) {
         return filmService.getFilmSortByLikesOrYears(directorId, sortBy);
     }
 
+    // Получение общих фильмов друзей
     @GetMapping("/common")
     public Collection<Film> getCommonFilms(@RequestParam("userId") Long userId, @RequestParam("friendId") Long friendId) {
         return filmService.getCommonFilms(userId, friendId);

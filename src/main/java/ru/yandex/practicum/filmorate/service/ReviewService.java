@@ -20,7 +20,7 @@ public class ReviewService {
         this.userService = userService;
     }
 
-    // возращаем список отзывов
+    // возвращаем список отзывов
     public Collection<Review> getAllReviewById(Long filmId, int count) {
         if (filmId == null || filmId == 0) {
             return reviewDbStorage.getAllReview(count);
@@ -48,16 +48,17 @@ public class ReviewService {
         if (review.getIsPositive() == null) {
             throw new NullPointerException("не должен быть null");
         }
-
+        reviewDbStorage.create(review);
         userService.addFeed(review.getUserId(), "REVIEW", "ADD", review.getReviewId());
-        return reviewDbStorage.create(review);
+        return review;
     }
 
     //удаление отзыва
     public void deleteReview(Long reviewId) {
         Review review = getReviewById(reviewId);
-        userService.addFeed(review.getUserId(), "REVIEW", "REMOVE", reviewId);
         reviewDbStorage.delete(reviewId);
+        userService.addFeed(review.getUserId(), "REVIEW", "REMOVE", reviewId);
+
     }
 
     // Обновление отзыва
@@ -74,21 +75,18 @@ public class ReviewService {
         if (newReview.getIsPositive() == null) {
             throw new NullPointerException("не должен быть null");
         }
-        userService.addFeed(newReview.getUserId(), "REVIEW", "UPDATE", newReview.getReviewId());
-
-        return reviewDbStorage.update(newReview);
+        Review updatedReview = reviewDbStorage.update(newReview);
+        userService.addFeed(updatedReview.getUserId(), "REVIEW", "UPDATE", updatedReview.getReviewId());
+        return updatedReview;
     }
-
 
     //ставим лайк/дизлайк отзыву
     public void addLikeDislikeReviewId(Long reviewId, Long userId, boolean like) {
-
         reviewDbStorage.addLikeDislikeReviewId(reviewId, userId, like);
     }
 
     //удаляем лайк/дизлайк отзыва
     public void deleteLikeDislikeReviewId(Long reviewId, Long userId, boolean like) {
-
         reviewDbStorage.deleteLikeDislikeReviewId(reviewId, userId, like);
     }
 

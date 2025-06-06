@@ -97,6 +97,7 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
         jdbc.update(DELETE_FRIENDS, userId, friendId);
     }
 
+    // Удаление пользователя
     public void deleteUser(long userId) {
         jdbc.update(DELETE_USER, userId, userId, userId, userId);
     }

@@ -25,9 +25,10 @@ public class FilmService {
     private final DirectorDbStorage directorDbStorage;
     private final UserDbStorage userDbStorage;
     private final UserService userService;
+    private final FeedDbStorage feedDbStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage, UserService userService) {
+    public FilmService(FilmStorage filmStorage, UserDbStorage userDbStorage, FilmDbStorage filmDbStorage, MpaDbStorage mpaDbStorage, GenreDbStorage genreDbStorage, DirectorDbStorage directorDbStorage, UserService userService, FeedDbStorage feedDbStorage) {
 
         this.filmDbStorage = filmDbStorage;
         this.mpaDbStorage = mpaDbStorage;
@@ -35,24 +36,24 @@ public class FilmService {
         this.directorDbStorage = directorDbStorage;
         this.userDbStorage = userDbStorage;
         this.userService = userService;
+        this.feedDbStorage = feedDbStorage;
     }
 
-    // Получение всех из таблицы films
-    public List<Film> getAllFilms() {
+    // Получение всех фильмов из таблицы films
+    public List<Film> getFilmsAll() {
         return new ArrayList<>(filmDbStorage.getAllFilms());
     }
 
-    public Collection<Film> getAllFilmsTest() {
+    // Получение всех фильмов из таблицы films
+    public Collection<Film> getAllFilms() {
         Set<Film> listAllFilms = new HashSet<>();
         List<Film> filmsId = filmDbStorage.getAllFilms();
         for (Film filmId : filmsId) {
             Film film = filmDbStorage.getById(filmId.getId());
             listAllFilms.add(film);
         }
-        // return listAllFilms.stream().toList().reversed();
         return listAllFilms.stream().sorted(Comparator.comparing(Film::getId)).toList();
     }
-
 
     // Создание фильма в таблице films
     public Film createFilm(Film film) {
@@ -75,6 +76,7 @@ public class FilmService {
         return updateFilm;
     }
 
+    // Удаление фильма
     public Film deleteFilm(Long deleteFilm) {
         if (deleteFilm == null || deleteFilm <= 0) {
             throw new ValidationException("Некорректный ID");
@@ -91,7 +93,6 @@ public class FilmService {
     public void addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
         userService.addFeed(userId, "LIKE", "ADD", filmId);
-        //  return filmDbStorage.findById(filmId).get();
     }
 
     // Удаление из лайка фильма
@@ -128,6 +129,7 @@ public class FilmService {
         return listAllFilms.stream().sorted(Comparator.comparing(Film::getId)).toList();
     }
 
+    // Поиск по названию и режиссеру
     public Collection<Film> search(String query, String by) {
         if (query == null || query.isBlank() || by.isBlank()) {
             throw new ValidationException("Пустой запрос");
@@ -138,10 +140,8 @@ public class FilmService {
         if (!byParam.contains("title") && !byParam.contains("director")) {
             throw new ValidationException("Неправильный параметр");
         }
-
         return filmDbStorage.search(query, byParam);
     }
-
 
     // Получение фильма по ID
     public Film getFilmWithId(Long filmId) {
@@ -180,6 +180,7 @@ public class FilmService {
         return optionalMpa.get();
     }
 
+    // Получение общих фильмов друзей
     public Collection<Film> getCommonFilms(Long userId, Long friendId) {
         if (userId == null || friendId == null || userId == friendId || userId < 0 || friendId < 0 || userId == 0 || friendId == 0) {
             throw new ValidationException("Не корректные данные о пользователях");
@@ -236,20 +237,16 @@ public class FilmService {
         }
     }
 
-
     // Получение списка рекомендованных фильмов
-
     public Collection<Film> getFilmRecommendations(Long userId) {
         if (userId == null || userId < 0 || userId == 0) {
             throw new ValidationException("не правильный id пользователя");
         }
-
         Collection<Long> filmsRecommendations = filmDbStorage.getFilmRecommendations(userId);
         if (filmsRecommendations.isEmpty()) {
             return Collections.emptyList();
         }
         Set<Long> filmsRecommend = new HashSet<>(filmDbStorage.getFilmRecommendations(userId));
-
         return filmsRecommend.stream().map(this::getFilmWithId).collect(Collectors.toList());
     }
 }

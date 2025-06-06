@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractor;
-import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetExtractorDirectors;
+import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetDirectors;
+import ru.yandex.practicum.filmorate.storage.mappers.FilmResultSetGenres;
 
 import java.util.*;
 
@@ -27,16 +27,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
     private static final String UPDATE_FILMS = """
             UPDATE films SET name = ?, description = ?, release_date = ?, duration = ?, mpa_id = ?
             WHERE film_id = ?;""";
-    private static final String ADD_LIKE = """
-            INSERT INTO likes (user_id, film_id)
-            SELECT ?, ?
-            WHERE NOT EXISTS (SELECT 1 FROM likes WHERE user_id = ? AND film_id = ?)""";
-    private static final String ADD_LIKE1 = """
-            MERGE INTO likes (user_id, film_id) VALUES( ?, ?);""";
+    private static final String ADD_LIKE = "MERGE INTO likes (user_id, film_id) VALUES( ?, ?);";
     private static final String DELETE_LIKE = "DELETE FROM likes WHERE user_id = ? AND film_id = ?";
     private static final String DELETE_FILM_GENRES = "DELETE FROM FILM_GENRES WHERE film_id = ? AND genre_id = ?";
     private static final String DELETE_FILM_DIRECTOR = "DELETE FROM FILM_DIRECTORS WHERE film_id = ? AND director_id = ?";
-
     private static final String DELETE_FILM = """
             DELETE FROM FILM_GENRES WHERE film_id = ?;
             DELETE FROM LIKES WHERE film_id = ?;
@@ -87,24 +81,23 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             LEFT JOIN DIRECTOR D ON fd.director_id = d.director_id
             WHERE f.film_id = ?
             ORDER BY fg.film_id ASC""";
-
-    private static final String UPDATE_GENRE = "Update FILM_GENRES SET genre_id = ? WHERE  film_id = ?;";
     private static final String GET_COMMON_FILMS = """
-            SELECT f.film_id, f.name AS film_name, f.description, f.release_date, f.duration, f.mpa_id, m.mpa_name, g.genre_id, g.genre_name, COUNT(l.user_id) AS likes_count
+             SELECT f.*, m.*, g.*, COUNT(l.user_id) AS likes_count, d.*
             FROM films f
-            JOIN mpa m ON f.mpa_id = m.mpa_id
-            JOIN film_genres fg ON f.film_id = fg.film_id
-            JOIN genre g ON fg.genre_id = g.genre_id
-            JOIN likes l ON f.film_id = l.film_id
+            left JOIN mpa m ON f.mpa_id = m.mpa_id
+            left   JOIN film_genres fg ON f.film_id = fg.film_id
+            left    JOIN genre g ON fg.genre_id = g.genre_id
+            left    JOIN likes l ON f.film_id = l.film_id
+            LEFT JOIN film_directors fd ON f.film_id = fd.film_id
+            LEFT JOIN director d ON fd.director_id = d.director_id
             WHERE l.film_id IN (SELECT DISTINCT l1.film_id FROM likes l1 WHERE l1.user_id = ?)
-                AND l.film_id IN (
+            AND l.film_id IN (
                     SELECT DISTINCT l2.film_id
                     FROM likes l2
                     WHERE l2.user_id = ?
-                )
-            GROUP BY f.film_id, f.name
-            ORDER BY likes_count DESC;
-            """;
+            )
+            GROUP BY f.film_id
+            ORDER BY likes_count DESC;""";
     private static final String GET_FILMS_SORT_BY_LIKES = """
             SELECT F.*, m.*, COUNT(fl.user_id) AS likes_count, g.*, fg.*, fd.*, d.*
             FROM Films f
@@ -129,7 +122,6 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             WHERE d.director_id = ?
             GROUP BY f.film_id, f.name, G.GENRE_ID
             ORDER BY F.RELEASE_DATE ASC;""";
-
     private static final String GET_FILM_RECOMMENDATIONS = """
             SELECT l.FILM_ID
             FROM LIKES AS l
@@ -144,13 +136,11 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             AND l.FILM_ID NOT IN
              (SELECT FILM_ID FROM LIKES WHERE USER_ID =%d);""";
 
-
     // Получение списка всех фильмов
     @Override
     public List<Film> getAllFilms() {
-        Set<Film> filmsUnik = new HashSet<>(findMany(FIND_ALL_FILMS));
-        return new ArrayList<>(filmsUnik);
-        // return findMany(FIND_ALL_FILMS);
+        Set<Film> listFilms = new HashSet<>(findMany(FIND_ALL_FILMS));
+        return new ArrayList<>(listFilms);
     }
 
     // Создание фильма в таблице films
@@ -189,12 +179,9 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 newFilm.getMpa().getId(),
                 newFilm.getId()
         );
-
         Film film = getById(newFilm.getId());
-
         List<Genre> genres = new ArrayList<>(newFilm.getGenres());
         genres.sort(Comparator.comparing(Genre::getId));
-
         for (Genre genre : film.getGenres()) {
             jdbc.update(DELETE_FILM_GENRES, film.getId(), genre.getId());
         }
@@ -206,26 +193,21 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
             jdbc.update(DELETE_FILM_DIRECTOR, film.getId(), director.getId());
         }
         film.getDirectors().clear();
-
         for (Director director : newFilm.getDirectors()) {
             jdbc.update(CREATE_DIRECTORS, newFilm.getId(), director.getId());
         }
         newFilm.setGenres(new LinkedHashSet<>(genres));
-
-        // for (Genre genre : newFilm.getGenres()) {
-        //   jdbc.update(UPDATE_GENRE, genre.getId(), newFilm.getId());
-        // }
         return newFilm;
     }
 
     // Обновление жанра фильма
     public Film updateGenre(long id) {
-        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetExtractor(), id);
+        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetGenres(), id);
     }
 
     // Обновление режиссера(director) фильма
     public Film updateDirector(long id) {
-        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetExtractorDirectors(), id);
+        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetDirectors(), id);
     }
 
     // Получение фильма по ID
@@ -235,25 +217,22 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
     // Получение фильма по ID со всеми жанрами
     public Film getById(long id) {
-        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetExtractor(), id);
-
+        return jdbc.query(GET_BY_ID_QUERY, new FilmResultSetGenres(), id);
     }
 
     // Добавление в лайка фильму
     public void addLike(long filmId, long userId) {
-        // jdbc.update(ADD_LIKE, userId, filmId, userId, filmId);
-        jdbc.update(ADD_LIKE1, userId, filmId);
+        jdbc.update(ADD_LIKE, userId, filmId);
     }
 
     //Удаление из лайка фильма
     public void deleteLike(long filmId, long userId) {
         jdbc.update(DELETE_LIKE, userId, filmId);
-
     }
 
+    // Удаление фильма
     public void deleteFilm(long filmId) {
         jdbc.update(DELETE_FILM, filmId, filmId, filmId);
-
     }
 
     // Получение популярных фильмов
@@ -264,10 +243,12 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
                 count));
     }
 
+    // Получение общих фильмов друзей
     public List<Film> getCommonFilms(Long userId, Long friendId) {
         return getCommonFilms(GET_COMMON_FILMS, userId, friendId);
     }
 
+    // Поиск по названию и режиссеру
     public Collection<Film> search(String query, Set<String> byParam) {
         if (byParam.size() == 2) {
             List<Film> find = findMany(GET_POPULAR_FILMS);
@@ -293,9 +274,8 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
         return findMany(GET_FILMS_SORT_BY_RELEASE_DATE, directorId);
     }
 
-
+    //Получение рекомендации по фильму
     public Collection<Long> getFilmRecommendations(Long userId) {
         return (jdbc.queryForList(String.format(GET_FILM_RECOMMENDATIONS, userId, userId), Long.class));
     }
-
 }

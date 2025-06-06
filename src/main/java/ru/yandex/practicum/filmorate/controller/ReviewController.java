@@ -15,7 +15,6 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
-
     @Autowired
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
@@ -39,7 +38,6 @@ public class ReviewController {
     @GetMapping
     public Collection<Review> getAllReview(@RequestParam(required = false) Long filmId,
                                            @RequestParam(required = false, defaultValue = "10") int count) {
-
         return reviewService.getAllReviewById(filmId, count);
     }
 
@@ -50,7 +48,6 @@ public class ReviewController {
     }
 
     // Обновление отзыва
-
     @PutMapping
     public Review updateReview(@RequestBody Review newReview) {
         return reviewService.updateReview(newReview);
