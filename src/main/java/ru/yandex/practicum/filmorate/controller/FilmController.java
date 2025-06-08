@@ -12,12 +12,10 @@ import java.util.Collection;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmStorage filmStorage;
     private final FilmService filmService;
 
     @Autowired
     public FilmController(FilmStorage filmStorage, FilmService filmService) {
-        this.filmStorage = filmStorage;
         this.filmService = filmService;
     }
 
@@ -41,8 +39,8 @@ public class FilmController {
 
     //Добавление лайка
     @PutMapping("/{filmId}/like/{userId}")
-    public Film addLike(@PathVariable Long filmId, @PathVariable Long userId) {
-        return filmService.addLike(filmId, userId);
+    public void addLike(@PathVariable Long filmId, @PathVariable Long userId) {
+        filmService.addLike(filmId, userId);
     }
 
     // Удаление лайка
@@ -51,15 +49,41 @@ public class FilmController {
         return filmService.deleteLike(filmId, userId);
     }
 
-    //Получение списка фильмов отмеченных лайком
-    @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(required = false, defaultValue = "0") Long count) {
-        return filmService.getPopularFilms(count);
+    // Удаление фильма
+    @DeleteMapping("/{filmId}")
+    public Film deleteFilm(@PathVariable Long filmId) {
+        return filmService.deleteFilm(filmId);
     }
 
+    //Получение списка фильмов отмеченных лайком
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "0") Long count,
+                                            @RequestParam(required = false) Long genreId,
+                                            @RequestParam(required = false) Long year) {
+        return filmService.getPopularFilms(count, genreId, year);
+    }
+
+    @GetMapping("/search")
+    public Collection<Film> search(@RequestParam String query, @RequestParam(required = false) String by) {
+
+        return filmService.search(query, by);
+    }
+
+    // Получение фильма по ID
     @GetMapping("/{filmId}")
     public Film getFilmWithId(@PathVariable Long filmId) {
         return filmService.getFilmWithId(filmId);
     }
 
+    // Получение фильма с сортировкой по количеству лайков и году
+    @GetMapping("/director/{directorId}{sortBy}")
+    public Collection<Film> getFilmSortByLikesOrYears(@PathVariable Long directorId, @RequestParam String sortBy) {
+        return filmService.getFilmSortByLikesOrYears(directorId, sortBy);
+    }
+
+    // Получение общих фильмов друзей
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam("userId") Long userId, @RequestParam("friendId") Long friendId) {
+        return filmService.getCommonFilms(userId, friendId);
+    }
 }

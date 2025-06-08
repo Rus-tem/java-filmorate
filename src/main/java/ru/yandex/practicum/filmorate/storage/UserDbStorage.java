@@ -13,21 +13,26 @@ import java.util.Optional;
 @Primary
 public class UserDbStorage extends BaseStorage implements UserStorage {
 
-    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
-        super(jdbc, mapper);
-    }
-
     private static final String FIND_ALL_USERS = "SELECT * FROM users";
     private static final String FIND_BY_EMAIL_USERS = "SELECT * FROM users WHERE email = ?";
     private static final String FIND_BY_ID_USERS = "SELECT * FROM users WHERE user_id = ?";
     private static final String CREATE_NEW_USER = "INSERT INTO users(name, login, email, birthday)" +
-            "VALUES (?, ?, ?, ?) ;";
+                                                  "VALUES (?, ?, ?, ?) ;";
     private static final String UPDATE_USER = "UPDATE users SET name = ?, login = ?, email = ?, birthday = ? WHERE user_id = ?";
     private static final String ADD_FRIEND_TO_USER = "MERGE INTO FRIENDS(user_id, friends_id)" + "VALUES (?, ?);";
     private static final String FIND_USER_FRIENDS = "SELECT * FROM users, friends WHERE users.user_id = friends.friends_id AND friends.user_id = ?";
     private static final String FIND_COMMON_FRIENDS = "SELECT * FROM users U, friends F, friends O " +
-            "WHERE U.user_id = F.friends_id AND U.user_id = O.friends_id AND f.user_id = ? AND O.user_id = ?";
+                                                      "WHERE U.user_id = F.friends_id AND U.user_id = O.friends_id AND f.user_id = ? AND O.user_id = ?";
     private static final String DELETE_FRIENDS = "DELETE FROM friends WHERE user_id = ? AND friends_id = ?";
+    private static final String DELETE_USER = """
+            DELETE FROM likes WHERE user_id = ?;
+            DELETE FROM friends WHERE user_id = ?;
+            DELETE FROM friends WHERE friends_id = ?;
+            DELETE FROM users WHERE user_id = ?""";
+
+    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
+        super(jdbc, mapper);
+    }
 
     // Получение всех пользователей из таблицы users
     @Override
@@ -91,4 +96,11 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
     public void deleteFriend(long userId, long friendId) {
         jdbc.update(DELETE_FRIENDS, userId, friendId);
     }
+
+    // Удаление пользователя
+    public void deleteUser(long userId) {
+        jdbc.update(DELETE_USER, userId, userId, userId, userId);
+    }
+
+
 }
