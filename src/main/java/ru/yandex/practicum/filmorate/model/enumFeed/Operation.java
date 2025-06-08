@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.model.enumFeed;
 
-public enum eventType {
-    LIKE,
-    REVIEW,
-    FRIEND
+public enum Operation {
+    REMOVE,
+    ADD,
+    UPDATE
 }

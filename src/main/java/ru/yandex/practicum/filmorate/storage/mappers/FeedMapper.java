@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.storage.mappers;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Feed;
-import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
-import ru.yandex.practicum.filmorate.model.enumFeed.operation;
+import ru.yandex.practicum.filmorate.model.enumFeed.EventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.Operation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,9 +17,9 @@ public class FeedMapper implements RowMapper<Feed> {
         feed.setTimestamp(resultSet.getLong("timestamp_id"));
         feed.setUserId(resultSet.getLong("userid"));
         String eventTypeString = resultSet.getString("eventType");
-        feed.setEventType(eventType.valueOf(eventTypeString));
+        feed.setEventType(EventType.valueOf(eventTypeString));
         String operationString = resultSet.getString("operation");
-        feed.setOperation(operation.valueOf(operationString));
+        feed.setOperation(Operation.valueOf(operationString));
         feed.setEventId(resultSet.getLong("eventId"));
         feed.setEntityId(resultSet.getLong("entityId"));
         return feed;

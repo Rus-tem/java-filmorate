@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
-import ru.yandex.practicum.filmorate.model.enumFeed.operation;
+import ru.yandex.practicum.filmorate.model.enumFeed.EventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.Operation;
 import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
@@ -79,7 +79,7 @@ public class UserService {
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.addFriend(id, friendId);
-        addFeed(id, eventType.FRIEND, operation.ADD, friendId);
+        addFeed(id, EventType.FRIEND, Operation.ADD, friendId);
         return listFriends;
     }
 
@@ -132,7 +132,7 @@ public class UserService {
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.deleteFriend(id, friendId);
-        addFeed(id, eventType.FRIEND, operation.REMOVE, friendId); // добавление в ленту событий
+        addFeed(id, EventType.FRIEND, Operation.REMOVE, friendId); // добавление в ленту событий
 
         return listFriends;
     }
@@ -163,7 +163,7 @@ public class UserService {
     }
 
     //Добавление в ленту событий
-    protected Feed addFeed(Long userId, eventType eventType, operation operation, Long entityId) {
+    protected Feed addFeed(Long userId, EventType eventType, Operation operation, Long entityId) {
         Feed feed = new Feed();
         Timestamp currentTimestamp = new Timestamp(new Date().getTime());
         long milliseconds = currentTimestamp.getTime();

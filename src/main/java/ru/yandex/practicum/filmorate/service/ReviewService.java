@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
-import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
-import ru.yandex.practicum.filmorate.model.enumFeed.operation;
+import ru.yandex.practicum.filmorate.model.enumFeed.EventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.Operation;
 import ru.yandex.practicum.filmorate.storage.ReviewDbStorage;
 
 import java.util.Collection;
@@ -51,7 +51,7 @@ public class ReviewService {
             throw new NullPointerException("не должен быть null");
         }
         reviewDbStorage.create(review);
-        userService.addFeed(review.getUserId(), eventType.REVIEW, operation.ADD, review.getReviewId());
+        userService.addFeed(review.getUserId(), EventType.REVIEW, Operation.ADD, review.getReviewId());
         return review;
     }
 
@@ -59,7 +59,7 @@ public class ReviewService {
     public void deleteReview(Long reviewId) {
         Review review = getReviewById(reviewId);
         reviewDbStorage.delete(reviewId);
-        userService.addFeed(review.getUserId(), eventType.REVIEW, operation.REMOVE, reviewId);
+        userService.addFeed(review.getUserId(), EventType.REVIEW, Operation.REMOVE, reviewId);
 
     }
 
@@ -78,7 +78,7 @@ public class ReviewService {
             throw new NullPointerException("не должен быть null");
         }
         Review updatedReview = reviewDbStorage.update(newReview);
-        userService.addFeed(updatedReview.getUserId(), eventType.REVIEW, operation.UPDATE, updatedReview.getReviewId());
+        userService.addFeed(updatedReview.getUserId(), EventType.REVIEW, Operation.UPDATE, updatedReview.getReviewId());
         return updatedReview;
     }
 

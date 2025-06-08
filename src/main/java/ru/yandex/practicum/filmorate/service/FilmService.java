@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
-import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
-import ru.yandex.practicum.filmorate.model.enumFeed.operation;
+import ru.yandex.practicum.filmorate.model.enumFeed.EventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.Operation;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.*;
@@ -94,7 +94,7 @@ public class FilmService {
     // Добавление лайка фильму
     public void addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
-        userService.addFeed(userId, eventType.LIKE, operation.ADD, filmId);
+        userService.addFeed(userId, EventType.LIKE, Operation.ADD, filmId);
     }
 
     // Удаление из лайка фильма
@@ -106,7 +106,7 @@ public class FilmService {
             throw new NotFoundException("Некорректный ID пользователя");
         }
         filmDbStorage.deleteLike(filmId, userId);
-        userService.addFeed(userId, eventType.LIKE, operation.REMOVE, filmId);
+        userService.addFeed(userId, EventType.LIKE, Operation.REMOVE, filmId);
         return filmDbStorage.findById(filmId).get();
     }
 

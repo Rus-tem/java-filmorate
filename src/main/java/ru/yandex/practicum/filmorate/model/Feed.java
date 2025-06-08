@@ -3,8 +3,8 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
-import ru.yandex.practicum.filmorate.model.enumFeed.operation;
+import ru.yandex.practicum.filmorate.model.enumFeed.EventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.Operation;
 
 @Data
 @NoArgsConstructor
@@ -13,8 +13,8 @@ public class Feed {
 
     private Long timestamp;
     private Long userId;
-    private eventType eventType;
-    private operation operation;
+    private EventType eventType;
+    private Operation operation;
     private Long eventId;
     private Long entityId;
 
