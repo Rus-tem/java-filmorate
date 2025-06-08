@@ -15,10 +15,6 @@ import java.util.Optional;
 @Primary
 public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
 
-    public ReviewDbStorage(JdbcTemplate jdbc, @Qualifier("reviewMapper") RowMapper<Review> mapper) {
-        super(jdbc, mapper);
-    }
-
     private static final String FIND_ALL_REVIEW = """
             SELECT r.*, sum(CASE WHEN rl.likes IS NULL THEN 0 ELSE rl.likes END) AS useful
             FROM REVIEWS AS r
@@ -50,6 +46,10 @@ public class ReviewDbStorage extends BaseStorage implements ReviewStorage {
     private static final String DELETE_LIKE_DISLIKE_REVIEW = "DELETE REVIEW_LIKES WHERE review_id=? AND user_id=? AND likes=?;";
     private static final String DELETE_REVIEW_BY_ID = "DELETE FROM REVIEWS WHERE review_id =?";
     private static final String DELETE_REVIEW_LIKES_BY_ID = "DELETE FROM REVIEW_LIKES WHERE review_id =?";
+
+    public ReviewDbStorage(JdbcTemplate jdbc, @Qualifier("reviewMapper") RowMapper<Review> mapper) {
+        super(jdbc, mapper);
+    }
 
     //получение списка всех отзывов
     @Override

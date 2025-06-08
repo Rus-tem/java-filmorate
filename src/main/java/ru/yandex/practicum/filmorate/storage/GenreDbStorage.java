@@ -15,12 +15,12 @@ import java.util.Optional;
 @Primary
 public class GenreDbStorage extends BaseStorage {
 
+    private static final String FIND_ALL_GENRES = "SELECT * FROM genre";
+    private static final String FIND_GENRE = "SELECT * FROM genre WHERE genre_id = ?";
+
     public GenreDbStorage(JdbcTemplate jdbc, @Qualifier("genreMapper") RowMapper<Genre> mapper) {
         super(jdbc, mapper);
     }
-
-    private static final String FIND_ALL_GENRES = "SELECT * FROM genre";
-    private static final String FIND_GENRE = "SELECT * FROM genre WHERE genre_id = ?";
 
     // Получение списка всех жанров
     public Collection<Genre> getAllGenres() {

@@ -13,17 +13,14 @@ import java.util.Collection;
 @Primary
 public class FeedDbStorage extends BaseStorage {
 
+    private static final String GET_FEED = "select * from feed  WHERE userid = ?;";
+    private static final String CREATE_FEED = "INSERT INTO feed(timestamp_id, userid, eventType, operation, entityId) VALUES(?, ?, ?, ?, ?);";
+    private static final String DELETE_FEED = "DELETE FROM feed WHERE userid = ? ";
+    private static final String DELETE_FEED_BY_ENTITY_ID = "DELETE FROM feed WHERE entityId = ? ";
+
     public FeedDbStorage(JdbcTemplate jdbc, @Qualifier("feedMapper") RowMapper<Feed> mapper) {
         super(jdbc, mapper);
     }
-
-    private static final String GET_FEED = """
-            select * from feed  WHERE userid = ?;""";
-
-    private static final String CREATE_FEED = """
-            INSERT INTO feed(timestamp_id, userid, eventType, operation, entityId) VALUES(?, ?, ?, ?, ?);""";
-    private static final String DELETE_FEED = "DELETE FROM feed WHERE userid = ? ";
-    private static final String DELETE_FEED_BY_ENTITY_ID = "DELETE FROM feed WHERE entityId = ? ";
 
     // Получение списка событий пользователя
     public Collection<Feed> getFeed(Long userId) {
@@ -43,8 +40,8 @@ public class FeedDbStorage extends BaseStorage {
                 CREATE_FEED,
                 feed.getTimestamp(),
                 feed.getUserId(),
-                feed.getEventType(),
-                feed.getOperation(),
+                feed.getEventType().toString(),
+                feed.getOperation().toString(),
                 feed.getEntityId()
         );
         feed.setEventId(id);

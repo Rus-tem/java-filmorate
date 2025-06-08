@@ -17,10 +17,6 @@ import java.util.*;
 @Primary
 public class FilmDbStorage extends BaseStorage implements FilmStorage {
 
-    public FilmDbStorage(JdbcTemplate jdbc, @Qualifier("filmMapper") RowMapper<Film> mapper) {
-        super(jdbc, mapper);
-    }
-
     private static final String CREATE_DIRECTORS = "MERGE INTO FILM_DIRECTORS(film_id, director_id)" + "VALUES (?, ?)";
     private static final String CREATE_GENRE = "MERGE INTO FILM_GENRES(film_id, genre_id)" + "VALUES (?, ?)";
     private static final String CREATE_NEW_FILMS = "INSERT INTO films(name, description, release_date, duration, mpa_id) VALUES (?, ?, ?, ?, ?) ;";
@@ -135,6 +131,10 @@ public class FilmDbStorage extends BaseStorage implements FilmStorage {
              LIMIT 10)
             AND l.FILM_ID NOT IN
              (SELECT FILM_ID FROM LIKES WHERE USER_ID =%d);""";
+
+    public FilmDbStorage(JdbcTemplate jdbc, @Qualifier("filmMapper") RowMapper<Film> mapper) {
+        super(jdbc, mapper);
+    }
 
     // Получение списка всех фильмов
     @Override

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.Feed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.operation;
 import ru.yandex.practicum.filmorate.storage.FeedDbStorage;
 import ru.yandex.practicum.filmorate.storage.UserDbStorage;
 
@@ -59,7 +61,7 @@ public class UserService {
         }
         Optional<User> optionalUser = userDbStorage.findById(updateUser.getId());
         if (optionalUser.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         userDbStorage.update(updateUser);
         return updateUser;
@@ -71,13 +73,13 @@ public class UserService {
         Optional<User> optionalUser2 = userDbStorage.findById(friendId);
 
         if (optionalUser1.isEmpty() || optionalUser2.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         List<User> listFriends = new ArrayList<>();
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.addFriend(id, friendId);
-        addFeed(id, "FRIEND", "ADD", friendId);
+        addFeed(id, eventType.FRIEND, operation.ADD, friendId);
         return listFriends;
     }
 
@@ -86,7 +88,7 @@ public class UserService {
         Optional<User> optionalUser1 = userDbStorage.findById(idUser);
 
         if (optionalUser1.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         User user1 = optionalUser1.get();
         return userDbStorage.getUserFriends(user1.getId());
@@ -98,7 +100,7 @@ public class UserService {
             throw new ValidationException("Некорректное id пользователя");
         }
         if (userDbStorage.findById(id).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         User user = userDbStorage.findById(id).get();
         return user;
@@ -111,7 +113,7 @@ public class UserService {
         Optional<User> optionalUser2 = userDbStorage.findById(otherId);
 
         if (optionalUser1.isEmpty() || optionalUser2.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         User user1 = optionalUser1.get();
         User user2 = optionalUser2.get();
@@ -124,13 +126,13 @@ public class UserService {
         Optional<User> optionalUser2 = userDbStorage.findById(friendId);
 
         if (optionalUser1.isEmpty() || optionalUser2.isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         List<User> listFriends = new ArrayList<>();
         listFriends.add(optionalUser1.get());
         listFriends.add(optionalUser2.get());
         userDbStorage.deleteFriend(id, friendId);
-        addFeed(id, "FRIEND", "REMOVE", friendId); // добавление в ленту событий
+        addFeed(id, eventType.FRIEND, operation.REMOVE, friendId); // добавление в ленту событий
 
         return listFriends;
     }
@@ -138,10 +140,10 @@ public class UserService {
     // Удаление пользователя
     public User deleteUser(Long userId) {
         if (userId == null || userId <= 0) {
-            throw new ValidationException("Некорректное id пользователя");
+            throw new ValidationException("Некорректное ID пользователя");
         }
         if (userDbStorage.findById(userId).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         User user = userDbStorage.findById(userId).get();
         userDbStorage.deleteUser(userId);
@@ -152,16 +154,16 @@ public class UserService {
     // Получение ленты событий пользователя
     public Collection<Feed> getFeed(Long userId) {
         if (userId == null || userId <= 0) {
-            throw new ValidationException("Некорректное id пользователя");
+            throw new ValidationException("Некорректное ID пользователя");
         }
         if (userDbStorage.findById(userId).isEmpty()) {
-            throw new NotFoundException("Пользователь не найден");
+            throw new NotFoundException("Пользователь c таким ID не найден");
         }
         return feedDbStorage.getFeed(userId);
     }
 
     //Добавление в ленту событий
-    protected Feed addFeed(Long userId, String eventType, String operation, Long entityId) {
+    protected Feed addFeed(Long userId, eventType eventType, operation operation, Long entityId) {
         Feed feed = new Feed();
         Timestamp currentTimestamp = new Timestamp(new Date().getTime());
         long milliseconds = currentTimestamp.getTime();

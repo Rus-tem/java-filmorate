@@ -13,10 +13,6 @@ import java.util.Optional;
 @Primary
 public class UserDbStorage extends BaseStorage implements UserStorage {
 
-    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
-        super(jdbc, mapper);
-    }
-
     private static final String FIND_ALL_USERS = "SELECT * FROM users";
     private static final String FIND_BY_EMAIL_USERS = "SELECT * FROM users WHERE email = ?";
     private static final String FIND_BY_ID_USERS = "SELECT * FROM users WHERE user_id = ?";
@@ -33,6 +29,10 @@ public class UserDbStorage extends BaseStorage implements UserStorage {
             DELETE FROM friends WHERE user_id = ?;
             DELETE FROM friends WHERE friends_id = ?;
             DELETE FROM users WHERE user_id = ?""";
+
+    public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
+        super(jdbc, mapper);
+    }
 
     // Получение всех пользователей из таблицы users
     @Override

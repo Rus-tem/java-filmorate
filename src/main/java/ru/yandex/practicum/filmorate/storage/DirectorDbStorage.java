@@ -16,16 +16,16 @@ import java.util.Optional;
 public class DirectorDbStorage extends BaseStorage {
     private FilmService filmService;
 
-    public DirectorDbStorage(JdbcTemplate jdbc, @Qualifier("directorMapper") RowMapper<Director> mapper) {
-        super(jdbc, mapper);
-    }
-
     private static final String FIND_ALL_DIRECTORS = "SELECT * FROM director";
     private static final String FIND_DIRECTOR = "SELECT * FROM director WHERE director_id = ?";
     private static final String CREATE_DIRECTOR = "INSERT INTO director(director_name) VALUES (?) ;";
     private static final String UPDATE_DIRECTOR = "UPDATE director SET director_name = ? WHERE director_id = ?;";
     private static final String DELETE_DIRECTOR = "DELETE FROM director WHERE director_id = ? ";
     private static final String DELETE_FROM_FILM_DIRECTOR = "DELETE FROM FILM_DIRECTORS WHERE director_id = ?";
+
+    public DirectorDbStorage(JdbcTemplate jdbc, @Qualifier("directorMapper") RowMapper<Director> mapper) {
+        super(jdbc, mapper);
+    }
 
     // Получение списка всех режиссеров(directors)
     public Collection<Director> getAllDirectors() {
@@ -55,6 +55,5 @@ public class DirectorDbStorage extends BaseStorage {
         jdbc.update(DELETE_FROM_FILM_DIRECTOR, id);
         jdbc.update(DELETE_DIRECTOR, id);
     }
-
 
 }

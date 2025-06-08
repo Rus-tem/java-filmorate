@@ -10,6 +10,8 @@ import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.enumFeed.eventType;
+import ru.yandex.practicum.filmorate.model.enumFeed.operation;
 import ru.yandex.practicum.filmorate.storage.*;
 
 import java.util.*;
@@ -77,34 +79,34 @@ public class FilmService {
     }
 
     // Удаление фильма
-    public Film deleteFilm(Long deleteFilm) {
-        if (deleteFilm == null || deleteFilm <= 0) {
-            throw new ValidationException("Некорректный ID");
+    public Film deleteFilm(Long filmId) {
+        if (filmId == null || filmId <= 0) {
+            throw new ValidationException("Некорректный ID фильма");
         }
-        if (filmDbStorage.getById(deleteFilm) == null) {
-            throw new NotFoundException("Фильм не найден");
+        if (filmDbStorage.getById(filmId) == null) {
+            throw new NotFoundException("Фильм c таким ID не найден");
         }
-        Film film = filmDbStorage.getById(deleteFilm);
-        filmDbStorage.deleteFilm(deleteFilm);
+        Film film = filmDbStorage.getById(filmId);
+        filmDbStorage.deleteFilm(filmId);
         return film;
     }
 
     // Добавление лайка фильму
     public void addLike(Long filmId, Long userId) {
         filmDbStorage.addLike(filmId, userId);
-        userService.addFeed(userId, "LIKE", "ADD", filmId);
+        userService.addFeed(userId, eventType.LIKE, operation.ADD, filmId);
     }
 
     // Удаление из лайка фильма
     public Film deleteLike(Long filmId, Long userId) {
         if (filmId == null || filmId < 0) {
-            throw new NotFoundException("Такой фильм не существует");
+            throw new NotFoundException("Некорректный ID фильма");
         }
         if (userId == null || userId < 0) {
-            throw new NotFoundException("Такой пользователь не существует");
+            throw new NotFoundException("Некорректный ID пользователя");
         }
         filmDbStorage.deleteLike(filmId, userId);
-        userService.addFeed(userId, "LIKE", "REMOVE", filmId);
+        userService.addFeed(userId, eventType.LIKE, operation.REMOVE, filmId);
         return filmDbStorage.findById(filmId).get();
     }
 
@@ -147,7 +149,7 @@ public class FilmService {
     public Film getFilmWithId(Long filmId) {
         Film film = filmDbStorage.getById(filmId);
         if (film == null) {
-            throw new NotFoundException("Фильм не найден");
+            throw new NotFoundException("Фильм c таким ID не найден");
         }
         return film;
     }
@@ -161,7 +163,7 @@ public class FilmService {
     public Genre getGenre(Long id) {
         Optional<Genre> optionalGenre = genreDbStorage.getGenre(id);
         if (optionalGenre.isEmpty()) {
-            throw new NotFoundException("Жанр не найден");
+            throw new NotFoundException("Жанр c таким ID не найден");
         }
         return optionalGenre.get();
     }
@@ -175,7 +177,7 @@ public class FilmService {
     public MPA getMpa(Long id) {
         Optional<MPA> optionalMpa = mpaDbStorage.getMpa(id);
         if (optionalMpa.isEmpty()) {
-            throw new NotFoundException("MPA не найден");
+            throw new NotFoundException("MPA c таким ID не найден");
         }
         return optionalMpa.get();
     }
