@@ -47,3 +47,40 @@ film_id integer REFERENCES films(film_id),
 PRIMARY KEY (user_id, film_id)
 );
 
+create TABLE IF NOT EXISTS REVIEWS (
+review_id integer NOT NULL PRIMARY KEY AUTO_INCREMENT ,
+content varchar(255) NOT NULL,
+is_positive boolean NOT NULL,
+user_id integer REFERENCES users(user_id) NOT NULL,
+film_id integer REFERENCES films(film_id) NOT NULL
+);
+
+create TABLE IF NOT EXISTS REVIEW_LIKES (
+review_id integer REFERENCES reviews(review_id),
+user_id integer REFERENCES users(user_id),
+likes integer
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS reviews ON REVIEW_LIKES(review_id, user_id);
+
+create TABLE IF NOT EXISTS DIRECTOR (
+director_id integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+director_name varchar(255),
+CONSTRAINT director_pk PRIMARY KEY (director_id)
+);
+
+create TABLE IF NOT EXISTS FILM_DIRECTORS (
+film_id integer REFERENCES films(film_id),
+director_id integer REFERENCES director(director_id),
+PRIMARY KEY (film_id, director_id)
+);
+
+create TABLE IF NOT EXISTS FEED (
+timestamp_id BIGINT,
+userid integer NOT NULL,
+eventType varchar(255) NOT NULL,
+operation varchar(255) NOT NULL,
+eventId integer NOT NULL PRIMARY KEY AUTO_INCREMENT,
+entityId integer,
+CONSTRAINT feed_pk PRIMARY KEY (eventId)
+);
